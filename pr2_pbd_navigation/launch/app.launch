@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="map_file" default="$(find pr2_pbd_navigation)/config/map.yaml" />
+
+  <include file="$(find pr2_moveit_config)/launch/move_group.launch" />
+  <include file="$(find pr2_teleop)/launch/teleop_joystick.launch" />
+
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
+
+  <node name="pr2_pbd_navigation" pkg="pr2_pbd_navigation" type="main.py" output="screen" />
+
+  <!-- This is the stuff required for web-based GUI -->
+  <node pkg="tf2_web_republisher" type="tf2_web_republisher" name="tf2_web_republisher" output="screen" />
+</launch>
