@@ -26,15 +26,22 @@ function init() {
       viewer.scaleToDimensions(gridClient.currentGrid.width, gridClient.currentGrid.height);
     });
 
-    function processBatteryState(state) {
+    function toggleControls(turnOn) {
         var controlsSpan = document.querySelector('div[id="controls"]');
-		controlsSpan.style.display = (state.discharging == 0) ? "none" : "inline-block";
+		controlsSpan.style.display = turnOn ? "inline-block" : "none";
+    }
+
+    function processBatteryState(state) {
         var plugWarningSpan = document.querySelector('div[id="plugwarning"]');
-		plugWarningSpan.style.display = (state.discharging == 0) ? "inline-block" : "none";
+		if (state.discharging == 0) {
+		    toggleControls(false);
+		    plugWarningSpan.style.display = "inline-block";
+		} else {
+		    toggleControls(true);
+		    plugWarningSpan.style.display = "none";
+		}
     }
 
 
-	batteryStateListener.subscribe(function(state) {
-		processBatteryState(state);
-	});
+	batteryStateListener.subscribe(processBatteryState);
   }
