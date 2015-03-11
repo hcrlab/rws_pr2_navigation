@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>PR2 Navigation App</title>
+
+        <script src="http://cdn.robotwebtools.org/EaselJS/current/easeljs.min.js"></script>
+        <script src="http://cdn.robotwebtools.org/threejs/current/three.js"></script>
+        <script src="http://cdn.robotwebtools.org/threejs/current/ColladaLoader.js"></script>
+        <script src="http://cdn.robotwebtools.org/threejs/current/STLLoader.js"></script>
+        <script src="http://cdn.robotwebtools.org/ColladaAnimationCompress/current/ColladaLoader2.js"></script>
+        <script src="http://cdn.robotwebtools.org/EventEmitter2/current/eventemitter2.js"></script>
+        <script src="http://cdn.robotwebtools.org/roslibjs/current/roslib.js"></script>
+        <script src="http://cdn.robotwebtools.org/ros2djs/current/ros2d.js"></script>
+
+        <script src="index.js"></script>
+    </head>
+
+    <body onload="init()">
+      <div id="plugwarning">
+          <h1>The PR2 is plugged in. Please unplug the PR2 before attempting navigation.</h1>
+      </div>
+      <div id="controls">
+          <h1>Map</h1>
+          <div id="map"></div>
+      </div>
+    </body>
+</html>
