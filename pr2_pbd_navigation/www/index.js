@@ -72,7 +72,7 @@ function init() {
 	});
 	document.querySelector("#doRename").addEventListener("click", function() {
 		navPub.publish(new ROSLIB.Message({
-			command: "name-location ",
+			command: "name-location",
 			param: newNameInp.value
 		}));
 		overlayDiv.style.display = "none";
