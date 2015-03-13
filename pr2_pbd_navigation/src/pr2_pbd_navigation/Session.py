@@ -24,8 +24,6 @@ class Session:
     file_extension = ".yaml"
 
     def __init__(self):
-        Session.session = self
-
         self.selected_location = -1
 
         if not os.path.exists(Session.data_directory):
@@ -45,6 +43,8 @@ class Session:
 
     @staticmethod
     def get_session():
+        if Session.session is None:
+            Session.session = Session()
         return Session.session
 
     def get_nav_system_state_cb(self, dummy):
