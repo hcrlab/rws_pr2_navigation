@@ -17,12 +17,35 @@
     </head>
 
     <body onload="init()">
-      <div id="plugwarning">
-          <h1>The PR2 is plugged in. Please unplug the PR2 before attempting navigation.</h1>
-      </div>
-      <div id="controls">
-          <h1>Map</h1>
-          <div id="map"></div>
-      </div>
+    <div id="plugwarning">
+        <h1>The PR2 is plugged in. Please unplug the PR2 before attempting navigation.</h1>
+    </div>
+    <div id="controls">
+        <table>
+            <tr>
+                <td id="locationList">
+                </td>
+                <td id="curLocation">
+                </td>
+            </tr>
+        </table>
+        <button id="renPopup">Rename location</button>
+        <div id="overlay" style="display: none;">
+            <div id="renameBox">
+                <input id="newName" />
+                <button id="doRename">Rename</button>
+                <button id="cancelRename">Cancel</button>
+            </div>
+        </div>
+        <button com="save-location">Save location</button>
+        <br>
+        <button com="delete-current">Delete this location</button>
+        <br>
+        <button com="new-location">Create new location</button>
+        <br>
+        <button com="spin-around">Spin around</button>
+        <h1>Map</h1>
+        <div id="map"></div>
+    </div>
     </body>
 </html>
