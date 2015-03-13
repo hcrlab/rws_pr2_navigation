@@ -1,4 +1,6 @@
 """Everything related to an experiment session"""
+import roslib
+roslib.load_manifest('pr2_pbd_navigation')
 from functools import partial
 import os
 from os import listdir
