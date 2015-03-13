@@ -11,6 +11,7 @@ from pr2_pbd_navigation.msg import NavSystemState
 from pr2_pbd_navigation.srv import GetNavSystemState
 from pr2_pbd_navigation.srv import GetNavSystemStateResponse
 from pr2_pbd_navigation.msg import Location
+from pr2_pbd_navigation.Robot import Robot
 
 
 class Session:
@@ -60,10 +61,6 @@ class Session:
             map(lambda act: act.id, self.locations),
             -1 if self.current_location_index is None else self.current_location_index)
 
-    def save_session_state(self):
-        for i in range(self.n_locations()):
-            self.save_location(self.locations[i])
-
     def create_new_location(self):
         """ Creates new location """
         if self.n_locations() > 0:
@@ -92,7 +89,7 @@ class Session:
         self._update_state()
 
     def save_current_location(self):
-        """ Saves current location onto hard drive """
+        """ Saves location of the robot into the current location msg """
         if self.n_locations() > 0:
             self.save_location(self.locations[self.current_location_index])
         else:
@@ -135,6 +132,12 @@ class Session:
 
     @staticmethod
     def save_location(location):
+        """ Saves location of the robot into the current location msg and stores the location msg on disk"""
+        location.pose = Robot.get_robot().get_base_pose()
+        Session.store_location(location)
+
+    @staticmethod
+    def store_location(location):
         """ Saves location to file """
         if location.id is None:
             location.id = 0
