@@ -1,3 +1,3 @@
 string name
-Pose pose
+geometry_msgs/Pose pose
 uint8 id
