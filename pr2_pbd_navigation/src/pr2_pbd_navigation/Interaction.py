@@ -13,7 +13,7 @@ class Interaction:
     def __init__(self):
         self.robot = Robot.get_robot()
         self.session = Session.get_session()
-        rospy.Subscriber('gui_command', NavigationCommand, self.nav_command_cb)
+        rospy.Subscriber('navigation_command', NavigationCommand, self.nav_command_cb)
         self.responses = {
             NavigationCommand.NEW_LOCATION: self.new_location,
             NavigationCommand.SAVE_LOCATION: self.save_location,
