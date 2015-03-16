@@ -31,7 +31,7 @@ class Session:
         self.locations = self.get_saved_locations()
         self.current_location_index = 0 if len(self.locations) > 0 else None
         if self.current_location_index is not None:
-            self.locations[self.current_location_index].initialize_viz()
+            self.initialize_viz()
 
         self._state_publisher = rospy.Publisher('nav_system_state',
                                                 NavSystemState)
@@ -66,7 +66,7 @@ class Session:
     def create_new_location(self):
         """ Creates new location """
         if self.n_locations() > 0:
-            self.locations[self.current_location_index].reset_viz()
+            self.reset_viz()
         new_loc = Location(name="Unnamed " + str(len(self.locations)))
         self.save_location(new_loc)
         self.locations.append(new_loc)
