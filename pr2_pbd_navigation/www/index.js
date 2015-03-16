@@ -22,6 +22,12 @@ var expListener = new ROSLIB.Topic({
 	messageType : 'pr2_pbd_navigation/NavSystemState'
 });
 
+var expListenerSrvCli = new ROSLIB.Service({
+	ros : ros,
+	name : '/get_nav_system_state',
+	serviceType : 'pr2_pbd_interaction/GetNavSystemState'
+});
+
 function init() {
     // Create the main viewer.
     var viewer = new ROS2D.Viewer({
@@ -29,16 +35,16 @@ function init() {
       width : 600,
       height : 500
     });
-
-    // Setup the map client.
-    var gridClient = new ROS2D.OccupancyGridClient({
-      ros : ros,
-      rootObject : viewer.scene
-    });
-    // Scale the canvas to fit to the map
-    gridClient.on('change', function(){
-      viewer.scaleToDimensions(gridClient.currentGrid.width, gridClient.currentGrid.height);
-    });
+//
+//    // Setup the map client.
+//    var gridClient = new ROS2D.OccupancyGridClient({
+//      ros : ros,
+//      rootObject : viewer.scene
+//    });
+//    // Scale the canvas to fit to the map
+//    gridClient.on('change', function(){
+//      viewer.scaleToDimensions(gridClient.currentGrid.width, gridClient.currentGrid.height);
+//    });
 
 	//hook up buttons with com attribute to navigation commands
 	[].slice.call(document.querySelectorAll("button[com]")).forEach(function(el) {
@@ -94,8 +100,6 @@ function init() {
 
 	// Code for drawing the list of locations.
 	var drawState = function(state) {
-		if (window.lockUpdate)
-			return;
 		//draw location list
 		locListCont.innerHTML = "";
 		state.location_names.forEach(function(loc_n) {
@@ -136,5 +140,9 @@ function init() {
 
 	expListener.subscribe(function(state) {
 		drawState(state);
-	})
+	});
+
+	expListenerSrvCli.callService(new ROSLIB.ServiceRequest({}), function(result) {
+		drawState(result.state);
+	});
   }

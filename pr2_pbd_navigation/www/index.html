@@ -14,6 +14,63 @@
         <script src="http://cdn.robotwebtools.org/ros2djs/current/ros2d.js"></script>
 
         <script src="index.js"></script>
+
+        <style>
+
+		html, body {
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+		}
+
+		#overlay {
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			position: absolute;
+			top: 0;
+			left: 0;
+			background: rgba(60, 60, 60, 0.3);
+			display: flex;
+			justify-content: center;
+			flex-direction: column;
+			align-content: center;
+		}
+
+		#renameBox {
+			max-width: 400px;
+			margin-left: auto;
+			margin-right: auto;
+			background: black;
+		}
+
+		#locationList div {
+			background-color: #ddd;
+			color: #000;
+			border-radius: 5px;
+			min-height: 30px;
+			margin-bottom: 10px;
+			cursor: pointer;
+		}
+		#locationList div.selected {
+			background-color:  #555;
+		}
+
+		@media (min-width: 800px) {
+			body, button, input, select, option {
+				font-size: 20px;
+			}
+
+			button {
+				height: 30px;
+				margin-bottom: 5px;
+				min-width: 30px;
+			}
+		}
+
+		</style>
     </head>
 
     <body onload="init()">
