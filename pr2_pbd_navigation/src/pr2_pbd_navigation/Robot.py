@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from geometry_msgs.msg import Pose, Point, Quaternion, Vector3, Twist
+import moveit_commander
 import roslib
 import rospy
 from tf import TransformListener
@@ -16,6 +17,7 @@ class Robot:
 
     def __init__(self):
         self.tf_listener = TransformListener()
+        self.base_group = moveit_commander.MoveGroupCommander("base")
 
     @staticmethod
     def get_robot():
@@ -53,3 +55,13 @@ class Robot:
         start_time = rospy.get_rostime()
         while rospy.get_rostime() < start_time + rospy.Duration(15.0 * rotate_count):
             base_publisher.publish(twist_msg)
+
+    def navigate_to(self, location):
+        if location is None:
+            return
+        self.base_group.set_pose_target(location.pose)
+        p = self.base_group.plan()
+        if not p.joint_trajectory.points:
+            rospy.logwarn("Couldn't find plan for base movement, base will not move.")
+        else:
+            self.base_group.execute(p)

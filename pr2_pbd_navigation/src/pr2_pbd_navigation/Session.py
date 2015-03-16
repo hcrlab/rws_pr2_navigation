@@ -79,6 +79,8 @@ class Session:
 
     def get_current_location(self):
         """ Returns the current location """
+        if self.current_location_index is None:
+            return None
         return self.locations[self.current_location_index]
 
     def delete_current_location(self):

@@ -19,7 +19,9 @@ class Interaction:
             NavigationCommand.SAVE_LOCATION: self.save_location,
             NavigationCommand.SPIN_AROUND: self.spin_around,
             NavigationCommand.DELETE_CURRENT: self.delete_current_location,
-            NavigationCommand.CHANGE_LOCATION_NAME: self.change_location_name
+            NavigationCommand.CHANGE_LOCATION_NAME: self.change_location_name,
+            NavigationCommand.SWITCH_TO_LOCATION: self.switch_to_location,
+            NavigationCommand.NAVIGATE_TO_CURRENT: self.navigate_to_current
         }
         rospy.loginfo('Interaction initialized.')
 
@@ -50,3 +52,9 @@ class Interaction:
 
     def delete_current_location(self, param):
         self.session.delete_current_location()
+
+    def switch_to_location(self, param):
+        self.session.switch_to_location_by_name(param)
+
+    def navigate_to_current(self, param):
+        self.robot.navigate_to(self.session.get_current_location())
