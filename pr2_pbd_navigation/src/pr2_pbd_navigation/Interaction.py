@@ -40,10 +40,10 @@ class Interaction:
         self.session.create_new_location()
 
     def save_location(self, param):
-        self.session.create_new_location()
+        self.session.save_current_location()
 
     def spin_around(self, param):
-        pass
+        self.robot.spin_base()
 
     def change_location_name(self, param):
         self.session.name_location(param)
