@@ -1,6 +1,8 @@
 #!/usr/bin/env python
+from actionlib import SimpleActionClient
 from geometry_msgs.msg import Pose, Point, Quaternion, Vector3, Twist
-import moveit_commander
+from move_base_msgs.msg import MoveBaseAction
+from pr2_common_action_msgs.msg import TuckArmsAction
 import roslib
 import rospy
 from tf import TransformListener
@@ -17,7 +19,13 @@ class Robot:
 
     def __init__(self):
         self.tf_listener = TransformListener()
-        self.base_group = moveit_commander.MoveGroupCommander("base")
+
+        self.nav_action_client = SimpleActionClient('move_base', MoveBaseAction)
+        self.nav_action_client.wait_for_server()
+        rospy.loginfo('Got response from move base action server.')
+        self.tuck_arms_client = SimpleActionClient('tuck_arms', TuckArmsAction)
+        self.tuck_arms_client.wait_for_server()
+        rospy.loginfo('Got response from tuck arms action server.')
 
     @staticmethod
     def get_robot():
@@ -59,9 +67,4 @@ class Robot:
     def navigate_to(self, location):
         if location is None:
             return
-        self.base_group.set_pose_target(location.pose)
-        p = self.base_group.plan()
-        if not p.joint_trajectory.points:
-            rospy.logwarn("Couldn't find plan for base movement, base will not move.")
-        else:
-            self.base_group.execute(p)
+        pass
