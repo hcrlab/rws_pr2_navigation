@@ -29,22 +29,22 @@ var expListenerSrvCli = new ROSLIB.Service({
 });
 
 function init() {
+
     // Create the main viewer.
     var viewer = new ROS2D.Viewer({
-      divID : 'map',
-      width : 600,
-      height : 500
+      divID : 'nav',
+      width : 750,
+      height : 800
     });
-//
-//    // Setup the map client.
-//    var gridClient = new ROS2D.OccupancyGridClient({
-//      ros : ros,
-//      rootObject : viewer.scene
-//    });
-//    // Scale the canvas to fit to the map
-//    gridClient.on('change', function(){
-//      viewer.scaleToDimensions(gridClient.currentGrid.width, gridClient.currentGrid.height);
-//    });
+
+    // Setup the nav client.
+    var nav = NAV2D.OccupancyGridClientNav({
+      ros : ros,
+      rootObject : viewer.scene,
+      viewer : viewer,
+      withOrientation : true,
+      serverName : '/pr2_move_base'
+    });
 
 	//hook up buttons with com attribute to navigation commands
 	[].slice.call(document.querySelectorAll("button[com]")).forEach(function(el) {
@@ -98,6 +98,15 @@ function init() {
 	var locListCont = document.querySelector("#locationList");
 	var curSpan = document.querySelector("#curLocation");
 
+    var locationMarker = new ROS2D.NavigationArrow({
+        size : 20,
+        strokeSize : 1,
+        fillColor : createjs.Graphics.getRGB(128, 128, 0, 0.66),
+        pulse : false
+    });
+    locationMarker.visible = false;
+    viewer.scene.addChild(locationMarker);
+
 	// Code for drawing the list of locations.
 	var drawState = function(state) {
 		//draw location list
@@ -136,6 +145,16 @@ function init() {
             }));
         });
         curSpan.appendChild(goBut);
+        // update the location on the map
+        locationMarker.x = state.current_location_pose.position.x;
+        locationMarker.y = -state.current_location_pose.position.y;
+        locationMarker.scaleX = 1.0 / viewer.scene.scaleX;
+        locationMarker.scaleY = 1.0 / viewer.scene.scaleY;
+        // change the angle
+        locationMarker.rotation = viewer.scene.rosQuaternionToGlobalTheta(state.current_location_pose.orientation);
+        locationMarker.visible = true;
+
+
 	};
 
 	expListener.subscribe(function(state) {
