@@ -69,7 +69,7 @@ class Session:
         """ Creates new location """
         if self.n_locations() > 0:
             self.reset_viz()
-        new_loc = Location(name="Unnamed " + str(len(self.locations)))
+        new_loc = Location(name="Unnamed " + str(len(self.locations)), id=len(self.locations))
         self.save_location(new_loc)
         self.locations.append(new_loc)
         self.current_location_index = len(self.locations) - 1
@@ -174,8 +174,8 @@ class Session:
         return yaml.load(yaml_str)
 
     @staticmethod
-    def get_file(location):
-        return Session.data_directory + str(location) + Session.file_extension
+    def get_file(location_id):
+        return Session.data_directory + str(location_id) + Session.file_extension
 
     @staticmethod
     def get_saved_locations():
