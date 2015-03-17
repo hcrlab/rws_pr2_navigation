@@ -89,7 +89,7 @@ class Session:
         """ Removes the current location """
         if self.n_locations() > 0:
             self.locations.pop(self.current_location_index)
-            self.current_location_index = -1
+            self.current_location_index = None
         else:
             rospy.logwarn('No locations saved yet.')
         self._update_state()
