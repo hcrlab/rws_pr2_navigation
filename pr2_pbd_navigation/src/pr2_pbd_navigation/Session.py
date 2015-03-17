@@ -89,6 +89,7 @@ class Session:
         """ Removes the current location """
         if self.current_location_index is None:
             rospy.logwarn('No location is selected.')
+            return
         if self.n_locations() > 0:
             self.locations.pop(self.current_location_index)
             self.current_location_index = None
@@ -100,6 +101,7 @@ class Session:
         """ Saves location of the robot into the current location msg """
         if self.current_location_index is None:
             rospy.logwarn('No location is selected.')
+            return
         if self.n_locations() > 0:
             self.save_location(self.locations[self.current_location_index])
         else:
@@ -138,6 +140,7 @@ class Session:
     def name_location(self, new_name):
         if self.current_location_index is None:
             rospy.logwarn('No location is selected.')
+            return
         if len(self.locations) > 0:
             self.locations[self.current_location_index].name = new_name
             self._update_state()
