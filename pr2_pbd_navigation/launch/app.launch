@@ -2,8 +2,8 @@
 <launch>
   <arg name="map_file" default="$(find pr2_pbd_navigation)/config/map.yaml" />
 
-  <include file="$(find pr2_moveit_config)/launch/move_group.launch" />
-  <include file="$(find pr2_teleop)/teleop_joystick.launch" />
+  <include file="$(find pr2_2dnav)/launch/pr2_2dnav.launch" />
+  <node name="robot_pose_publisher" pkg="robot_pose_publisher" type="robot_pose_publisher" />
 
   <node name="pr2_pbd_navigation" pkg="pr2_pbd_navigation" type="main.py" output="screen" />
 
