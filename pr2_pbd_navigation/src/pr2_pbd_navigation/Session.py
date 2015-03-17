@@ -1,4 +1,5 @@
 """Everything related to an experiment session"""
+from geometry_msgs.msg import Pose
 import roslib
 roslib.load_manifest('pr2_pbd_navigation')
 from functools import partial
@@ -61,7 +62,8 @@ class Session:
         return NavSystemState(
             map(lambda act: act.name, self.locations),
             map(lambda act: act.id, self.locations),
-            -1 if self.current_location_index is None else self.current_location_index)
+            -1 if self.current_location_index is None else self.current_location_index,
+            Pose() if self.current_location_index is None else self.get_current_location().pose)
 
     def create_new_location(self):
         """ Creates new location """
