@@ -16,7 +16,7 @@ class Interaction:
         rospy.Subscriber('navigation_command', NavigationCommand, self.nav_command_cb)
         self.responses = {
             NavigationCommand.NEW_LOCATION: self.new_location,
-            NavigationCommand.SAVE_LOCATION: self.save_location,
+            NavigationCommand.RECORD_LOCATION: self.record_location,
             NavigationCommand.SPIN_AROUND: self.spin_around,
             NavigationCommand.DELETE_CURRENT: self.delete_current_location,
             NavigationCommand.CHANGE_LOCATION_NAME: self.change_location_name,
@@ -41,8 +41,8 @@ class Interaction:
     def new_location(self, param):
         self.session.create_new_location()
 
-    def save_location(self, param):
-        self.session.save_current_location()
+    def record_location(self, param):
+        self.session.record_current_location()
 
     def spin_around(self, param):
         self.robot.spin_base()

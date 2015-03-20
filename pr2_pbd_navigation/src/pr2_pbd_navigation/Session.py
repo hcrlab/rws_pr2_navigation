@@ -70,7 +70,7 @@ class Session:
         if self.n_locations() > 0:
             self.reset_viz()
         new_loc = Location(name="Unnamed " + str(len(self.locations)), id=len(self.locations))
-        self.save_location(new_loc)
+        self.record_and_store_location(new_loc)
         self.locations.append(new_loc)
         self.current_location_index = len(self.locations) - 1
         self._update_state()
@@ -97,13 +97,13 @@ class Session:
             rospy.logwarn('No locations saved yet.')
         self._update_state()
 
-    def save_current_location(self):
+    def record_current_location(self):
         """ Saves location of the robot into the current location msg """
         if self.current_location_index is None:
             rospy.logwarn('No location is selected.')
             return
         if self.n_locations() > 0:
-            self.save_location(self.locations[self.current_location_index])
+            self.record_and_store_location(self.locations[self.current_location_index])
         else:
             rospy.logwarn('No locations created yet.')
 
@@ -145,7 +145,7 @@ class Session:
             self._update_state()
 
     @staticmethod
-    def save_location(location):
+    def record_and_store_location(location):
         """ Saves location of the robot into the current location msg and stores the location msg on disk"""
         location.pose = Robot.get_robot().get_base_pose()
         Session.store_location(location)

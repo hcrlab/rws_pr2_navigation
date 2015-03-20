@@ -1,5 +1,5 @@
 string NEW_LOCATION = new-location
-string SAVE_LOCATION = save-location
+string RECORD_LOCATION = record-location
 string SPIN_AROUND = spin-around
 string CHANGE_LOCATION_NAME = name-location
 string DELETE_CURRENT = delete-current
