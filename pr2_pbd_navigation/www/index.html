@@ -87,7 +87,11 @@
                 </td>
             </tr>
         </table>
-        <button id="renPopup">Rename location</button>
+        <br>
+        <button com="delete-current" id="deleteBtn">Delete this location</button>
+        <button com="navigate-to-current" id="navigateBtn">Navigate to this location</button>
+        <br>
+        <button id="renameBtn">Rename location</button>
         <div id="overlay" style="display: none;">
             <div id="renameBox">
                 <input id="newName" />
@@ -95,7 +99,7 @@
                 <button id="cancelRename">Cancel</button>
             </div>
         </div>
-        <button com="record-location">Save location</button>
+        <button com="record-location" id="recordBtn">Record current location</button>
         <br>
         <button com="new-location">Create new location</button>
         <br>

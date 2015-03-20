@@ -81,7 +81,7 @@ function init() {
 	var overlayDiv = document.querySelector("#overlay");
 	var newNameInp = document.querySelector("#newName");
 
-	document.querySelector("#renPopup").addEventListener("click", function() {
+	document.querySelector("#renameBtn").addEventListener("click", function() {
 		overlayDiv.style.display = "";
 	});
 	document.querySelector("#doRename").addEventListener("click", function() {
@@ -122,37 +122,32 @@ function init() {
 			});
 			locListCont.appendChild(dv);
 		});
-		locListCont.querySelectorAll("div")[state.current_location].className =
-			"selected";
+		if (state.current_location != -1) {
+		    // If a location is selected, enable and create buttons for its manipulation.
+            document.querySelector("#renameBtn").removeAttribute("disabled");
+            document.querySelector("#recordBtn").removeAttribute("disabled");
+            document.querySelector("#deleteBtn").removeAttribute("disabled");
+            document.querySelector("#navigateBtn").removeAttribute("disabled");
 
-		newNameInp.value = state.location_names[state.current_location];
+		    locListCont.querySelectorAll("div")[state.current_location].className = "selected";
+		    newNameInp.value = state.location_names[state.current_location];
 
-		//current location:
-		curSpan.innerHTML = "";
-        var delBut = document.createElement("button");
-        delBut.innerHTML = "Delete this location";
-        delBut.addEventListener("click", function() {
-            navPub.publish(new ROSLIB.Message({
-                command: "delete-current"
-            }));
-        });
-        curSpan.appendChild(delBut);
-        var goBut = document.createElement("button");
-        goBut.innerHTML = "Go to this location";
-        goBut.addEventListener("click", function() {
-            navPub.publish(new ROSLIB.Message({
-                command: "navigate-to-current"
-            }));
-        });
-        curSpan.appendChild(goBut);
-        // update the location on the map
-        locationMarker.x = state.current_location_pose.position.x;
-        locationMarker.y = -state.current_location_pose.position.y;
-        locationMarker.scaleX = 1.0 / viewer.scene.scaleX;
-        locationMarker.scaleY = 1.0 / viewer.scene.scaleY;
-        // change the angle
-        locationMarker.rotation = viewer.scene.rosQuaternionToGlobalTheta(state.current_location_pose.orientation);
-        locationMarker.visible = true;
+            // update the location on the map
+            locationMarker.x = state.current_location_pose.position.x;
+            locationMarker.y = -state.current_location_pose.position.y;
+            locationMarker.scaleX = 1.0 / viewer.scene.scaleX;
+            locationMarker.scaleY = 1.0 / viewer.scene.scaleY;
+            // change the angle
+            locationMarker.rotation = viewer.scene.rosQuaternionToGlobalTheta(state.current_location_pose.orientation);
+            locationMarker.visible = true;
+        } else {
+            // If no location is selected, disable buttons that operate on current location.
+            document.querySelector("#renameBtn").setAttribute("disabled", true);
+            document.querySelector("#recordBtn").setAttribute("disabled", true);
+            document.querySelector("#deleteBtn").setAttribute("disabled", true);
+            document.querySelector("#navigateBtn").setAttribute("disabled", true);
+
+        }
 
 
 	};
