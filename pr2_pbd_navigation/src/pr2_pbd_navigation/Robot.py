@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 from actionlib import SimpleActionClient
-from geometry_msgs.msg import Pose, Point, Quaternion, Vector3, Twist
-from move_base_msgs.msg import MoveBaseAction
-from pr2_common_action_msgs.msg import TuckArmsAction
+from actionlib_msgs.msg import GoalStatus
+from geometry_msgs.msg import Pose, Point, Quaternion, Vector3, Twist, PoseStamped
+from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
+from pr2_common_action_msgs.msg import TuckArmsAction, TuckArmsGoal
 import roslib
 import rospy
 from tf import TransformListener
 import tf
+import time
 
 roslib.load_manifest('pr2_pbd_navigation')
 
@@ -66,5 +68,46 @@ class Robot:
 
     def navigate_to(self, location):
         if location is None:
+            rospy.loginfo("No location provided, will not navigate.")
             return
-        pass
+        rospy.loginfo("Starting navigation.")
+        base_pose = location.pose
+
+        rospy.loginfo("Tucking arms for navigation.")
+        goal = TuckArmsGoal()
+        goal.tuck_left = True
+        goal.tuck_right = True
+        self.tuck_arms_client.send_goal_and_wait(goal, rospy.Duration(30.0), rospy.Duration(5.0))
+
+        pose_stamped = PoseStamped()
+        pose_stamped.header.stamp = rospy.Time.now()
+        pose_stamped.header.frame_id = "/map"
+        pose_stamped.pose = base_pose
+        nav_goal = MoveBaseGoal()
+        nav_goal.target_pose = pose_stamped
+        # Client sends the goal to the Server
+        self.nav_action_client.send_goal(nav_goal)
+        elapsed_time = 0
+        while (self.nav_action_client.get_state() == GoalStatus.ACTIVE
+               or self.nav_action_client.get_state() == GoalStatus.PENDING):
+            time.sleep(0.01)
+            elapsed_time += 0.01
+            if elapsed_time > 120:
+                rospy.loginfo('Timeout waiting for base navigation to finish')
+                self.nav_action_client.cancel_goal()
+                break
+        rospy.loginfo('Done with base navigation.')
+
+        # Untuck arms and move to where they were.
+        rospy.loginfo("Untucking arms.")
+        goal = TuckArmsGoal()
+        goal.tuck_left = False
+        goal.tuck_right = False
+        self.tuck_arms_client.send_goal_and_wait(goal, rospy.Duration(30.0), rospy.Duration(5.0))
+
+        # Verify that base succeeded
+        if (self.nav_action_client.get_state() != GoalStatus.SUCCEEDED):
+            rospy.logwarn('Aborting because base failed to move to pose.')
+            return False
+        else:
+            return True
