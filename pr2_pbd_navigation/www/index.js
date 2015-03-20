@@ -59,11 +59,20 @@ function init() {
 
 
     function toggleControls(turnOn) {
+        // Enable or disable navigation-related controls.
         var controlsSpan = document.querySelector('div[id="controls"]');
 //		controlsSpan.style.display = turnOn ? "inline-block" : "none";
+        if (turnOn) {
+            document.querySelector("#navigateBtn").removeAttribute("disabled");
+            document.querySelector("#spinBtn").removeAttribute("disabled");
+        } else {
+            document.querySelector("#navigateBtn").setAttribute("disabled", true);
+            document.querySelector("#spinBtn").setAttribute("disabled", true);
+        }
     }
 
     function processBatteryState(state) {
+        // If robot is plugged in, display warning and turn off navigation controls.
         var plugWarningSpan = document.querySelector('div[id="plugwarning"]');
 		if (state.discharging == 0) {
 		    toggleControls(false);
