@@ -143,6 +143,7 @@ class Session:
             return
         if len(self.locations) > 0:
             self.locations[self.current_location_index].name = new_name
+            self.store_location(self.locations[self.current_location_index])
             self._update_state()
 
     @staticmethod
