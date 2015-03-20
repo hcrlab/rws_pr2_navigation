@@ -106,6 +106,7 @@ class Session:
             self.record_and_store_location(self.locations[self.current_location_index])
         else:
             rospy.logwarn('No locations created yet.')
+        self._update_state()
 
     def get_location_name(self, location_number):
         if self.n_locations() > 0 and 0 <= location_number < self.n_locations():
