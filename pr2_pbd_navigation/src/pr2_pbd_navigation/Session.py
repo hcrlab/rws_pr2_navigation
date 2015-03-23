@@ -91,6 +91,7 @@ class Session:
             rospy.logwarn('No location is selected.')
             return
         if self.n_locations() > 0:
+            self.delete_location_file(self.get_current_location())
             self.locations.pop(self.current_location_index)
             self.current_location_index = None
         else:
@@ -174,6 +175,11 @@ class Session:
         loc_file = open(Session.get_file(location.id), 'w')
         loc_file.write(Session.to_string(location))
         loc_file.close()
+
+    @staticmethod
+    def delete_location_file(location):
+        """ Deletes the file of the location """
+        os.remove(Session.get_file(location.id))
 
     @staticmethod
     def to_string(location):
