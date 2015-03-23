@@ -89,21 +89,24 @@ function init() {
       height : 800
     });
 
+    processPose = null;
+    if (document.querySelector("#setGoalRadioBtn").checked) {
+		processPose = NAV2D.Navigator.sendGoal;
+    } else if (document.querySelector("#setInitRadioBtn").checked) {
+		processPose = setInitialPose;
+	} else if (document.querySelector("#setLocationRadioBtn").checked) {
+		processPose = setLocation;
+	}
+
     // Setup the nav client.
     var nav = NAV2D.OccupancyGridClientNav({
       ros : ros,
       rootObject : viewer.scene,
       viewer : viewer,
       withOrientation : true,
-      serverName : '/pr2_move_base'
+      serverName : '/pr2_move_base',
+      processPose : processPose
     });
-    if (document.querySelector("#setGoalRadioBtn").checked) {
-		NAV2D.Navigator.processPose = NAV2D.Navigator.sendGoal;
-    } else if (document.querySelector("#setInitRadioBtn").checked) {
-		NAV2D.Navigator.processPose = setInitialPose;
-	} else if (document.querySelector("#setLocationRadioBtn").checked) {
-		NAV2D.Navigator.processPose = setLocation;
-	}
 
     // Setup the controls for the map.
     document.querySelector("#setGoalRadioBtn").addEventListener("click", function() {

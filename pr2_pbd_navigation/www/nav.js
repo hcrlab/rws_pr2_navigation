@@ -90,7 +90,7 @@ NAV2D.Navigator = function(options) {
   var actionName = options.actionName || 'move_base_msgs/MoveBaseAction';
   var withOrientation = options.withOrientation || false;
   this.rootObject = options.rootObject || new createjs.Container();
-  NAV2D.Navigator.processPose = null;
+  NAV2D.Navigator.processPose = options.processPose || null;
 
   // setup the actionlib client
   var actionClient = new ROSLIB.ActionClient({
@@ -332,6 +332,7 @@ NAV2D.OccupancyGridClientNav = function(options) {
   this.rootObject = options.rootObject || new createjs.Container();
   this.viewer = options.viewer;
   this.withOrientation = options.withOrientation || false;
+  this.processPose = options.processPose || null;
 
   this.navigator = null;
 
@@ -348,7 +349,8 @@ NAV2D.OccupancyGridClientNav = function(options) {
       serverName : that.serverName,
       actionName : that.actionName,
       rootObject : that.rootObject,
-      withOrientation : that.withOrientation
+      withOrientation : that.withOrientation,
+      processPose : that.processPose
     });
 
     // scale the viewer to fit the map
