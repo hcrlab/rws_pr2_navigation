@@ -99,10 +99,6 @@ NAV2D.Navigator = function(options) {
     serverName : serverName
   });
 
-  this.setProcessingFunction = function(func) {
-     processPose = func;
-  }
-
   /**
    * Send a goal to the navigation stack with the given pose.
    *

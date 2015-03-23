@@ -97,7 +97,13 @@ function init() {
       withOrientation : true,
       serverName : '/pr2_move_base'
     });
-    NAV2D.Navigator.processPose = NAV2D.Navigator.sendGoal;
+    if (document.querySelector("#setGoalRadioBtn").checked) {
+		NAV2D.Navigator.processPose = NAV2D.Navigator.sendGoal;
+    } else if (document.querySelector("#setInitRadioBtn").checked) {
+		NAV2D.Navigator.processPose = setInitialPose;
+	} else if (document.querySelector("#setLocationRadioBtn").checked) {
+		NAV2D.Navigator.processPose = setLocation;
+	}
 
     // Setup the controls for the map.
     document.querySelector("#setGoalRadioBtn").addEventListener("click", function() {
@@ -105,11 +111,9 @@ function init() {
 	});
     document.querySelector("#setInitRadioBtn").addEventListener("click", function() {
 		NAV2D.Navigator.processPose = setInitialPose;
-		//NAV2D.Navigator.setProcessingFunction(setInitialPose);
 	});
     document.querySelector("#setLocationRadioBtn").addEventListener("click", function() {
 		NAV2D.Navigator.processPose = setLocation;
-		//NAV2D.Navigator.setProcessingFunction(setLocation);
 	});
 
 
