@@ -135,10 +135,8 @@ function init() {
 //		controlsSpan.style.display = turnOn ? "inline-block" : "none";
         if (turnOn) {
             document.querySelector("#navigateBtn").removeAttribute("disabled");
-            document.querySelector("#spinBtn").removeAttribute("disabled");
         } else {
             document.querySelector("#navigateBtn").setAttribute("disabled", true);
-            document.querySelector("#spinBtn").setAttribute("disabled", true);
         }
     }
 
