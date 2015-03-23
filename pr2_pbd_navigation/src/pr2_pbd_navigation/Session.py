@@ -70,7 +70,7 @@ class Session:
         if self.n_locations() > 0:
             self.reset_viz()
         new_loc = Location(name="Unnamed " + str(len(self.locations)), id=len(self.locations))
-        self.record_and_store_location(new_loc)
+        Session.record_and_store_location(new_loc)
         self.locations.append(new_loc)
         self.current_location_index = len(self.locations) - 1
         self._update_state()
@@ -91,7 +91,7 @@ class Session:
             rospy.logwarn('No location is selected.')
             return
         if self.n_locations() > 0:
-            self.delete_location_file(self.get_current_location())
+            Session.delete_location_file(self.get_current_location())
             self.locations.pop(self.current_location_index)
             self.current_location_index = None
         else:
@@ -104,7 +104,7 @@ class Session:
             rospy.logwarn('No location is selected.')
             return
         if self.n_locations() > 0:
-            self.record_and_store_location(self.locations[self.current_location_index])
+            Session.record_and_store_location(self.locations[self.current_location_index])
         else:
             rospy.logwarn('No locations created yet.')
         self._update_state()
@@ -116,7 +116,7 @@ class Session:
             return
         if self.n_locations() > 0:
             self.locations[self.current_location_index].pose = pose
-            self.store_location(self.locations[self.current_location_index])
+            Session.store_location(self.locations[self.current_location_index])
         else:
             rospy.logwarn('No locations created yet.')
         self._update_state()
@@ -156,7 +156,7 @@ class Session:
             return
         if len(self.locations) > 0:
             self.locations[self.current_location_index].name = new_name
-            self.store_location(self.locations[self.current_location_index])
+            Session.store_location(self.locations[self.current_location_index])
             self._update_state()
 
     @staticmethod
