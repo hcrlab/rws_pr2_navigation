@@ -12,8 +12,8 @@
         <script src="http://cdn.robotwebtools.org/EventEmitter2/current/eventemitter2.js"></script>
         <script src="http://cdn.robotwebtools.org/roslibjs/current/roslib.js"></script>
         <script src="http://cdn.robotwebtools.org/ros2djs/current/ros2d.js"></script>
-        <script type="text/javascript" src="http://cdn.robotwebtools.org/nav2djs/current/nav2d.js"></script>
 
+        <script src="nav.js"></script>
         <script src="index.js"></script>
 
         <style>
@@ -78,6 +78,12 @@
     <div id="plugwarning">
         <h1>The PR2 is plugged in. Please unplug the PR2 before attempting navigation.</h1>
     </div>
+    <div id="initwarning">
+        <h1>The PR2 pose is not set. Please set the PR2 pose on the map.</h1>
+    </div>
+    <div id="localizedwarning">
+        <h1>The PR2 is not localized. Please open RVIZ and localize the robot.</h1>
+    </div>
     <div id="controls">
         <table>
             <tr>
@@ -105,6 +111,11 @@
         <br>
         <button com="spin-around" id="spinBtn">Spin around</button>
         <h1>Map</h1>
+        <form id="mapcontrols" action="">
+            <input type="radio" name="maptype" id="setGoalRadioBtn" checked="true">Navigate<br>
+            <input type="radio" name="maptype" id="setInitRadioBtn">Initialize robot pose<br>
+            <input type="radio" name="maptype" id="setLocationRadioBtn">Create new locations
+        </form>
         <div id="nav"></div>
     </div>
     </body>

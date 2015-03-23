@@ -21,7 +21,8 @@ class Interaction:
             NavigationCommand.DELETE_CURRENT: self.delete_current_location,
             NavigationCommand.CHANGE_LOCATION_NAME: self.change_location_name,
             NavigationCommand.SWITCH_TO_LOCATION: self.switch_to_location,
-            NavigationCommand.NAVIGATE_TO_CURRENT: self.navigate_to_current
+            NavigationCommand.NAVIGATE_TO_CURRENT: self.navigate_to_current,
+            NavigationCommand.SET_POSE: self.set_pose
         }
         rospy.loginfo('Interaction initialized.')
 
@@ -34,27 +35,30 @@ class Interaction:
         if command.command in self.responses.keys():
             rospy.loginfo('Calling response for command ' + command.command)
             response_function = self.responses[command.command]
-            response_function(command.param)
+            response_function(command.param, command.pose)
         else:
             rospy.logwarn('This command (' + command.command + ') is unknown.')
 
-    def new_location(self, param):
+    def new_location(self, param1, param2):
         self.session.create_new_location()
 
-    def record_location(self, param):
+    def record_location(self, param1, param2):
         self.session.record_current_location()
 
-    def spin_around(self, param):
+    def spin_around(self, param1, param2):
         self.robot.spin_base()
 
-    def change_location_name(self, param):
-        self.session.name_location(param)
+    def change_location_name(self, param1, param2):
+        self.session.name_location(param1)
 
-    def delete_current_location(self, param):
+    def delete_current_location(self, param1, param2):
         self.session.delete_current_location()
 
-    def switch_to_location(self, param):
-        self.session.switch_to_location_by_name(param)
+    def switch_to_location(self, param1, param2):
+        self.session.switch_to_location_by_name(param1)
 
-    def navigate_to_current(self, param):
+    def navigate_to_current(self, param1, param2):
         self.robot.navigate_to(self.session.get_current_location())
+
+    def set_pose(self, param1, param2):
+        self.session.set_pose(param2)

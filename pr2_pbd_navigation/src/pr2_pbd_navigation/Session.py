@@ -108,6 +108,18 @@ class Session:
             rospy.logwarn('No locations created yet.')
         self._update_state()
 
+    def set_pose(self, pose):
+        """ Saves the given pose into the current location msg """
+        if self.current_location_index is None:
+            rospy.logwarn('No location is selected.')
+            return
+        if self.n_locations() > 0:
+            self.locations[self.current_location_index].pose = pose
+            self.store_location(self.locations[self.current_location_index])
+        else:
+            rospy.logwarn('No locations created yet.')
+        self._update_state()
+
     def get_location_name(self, location_number):
         if self.n_locations() > 0 and 0 <= location_number < self.n_locations():
             location = self.locations[location_number]

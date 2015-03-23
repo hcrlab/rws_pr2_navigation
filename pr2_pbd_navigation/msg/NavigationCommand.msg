@@ -5,5 +5,7 @@ string CHANGE_LOCATION_NAME = name-location
 string DELETE_CURRENT = delete-current
 string SWITCH_TO_LOCATION = switch-to-location
 string NAVIGATE_TO_CURRENT = navigate-to-current
+string SET_POSE = set-pose
 string command
 string param
+geometry_msgs/Pose pose

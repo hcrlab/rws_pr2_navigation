@@ -22,11 +22,60 @@ var expListener = new ROSLIB.Topic({
 	messageType : 'pr2_pbd_navigation/NavSystemState'
 });
 
+var estimatedPoseListener = new ROSLIB.Topic({
+	ros : ros,
+	name : '/particlecloud',
+	messageType : 'geometry_msgs/PoseArray'
+});
+
 var expListenerSrvCli = new ROSLIB.Service({
 	ros : ros,
 	name : '/get_nav_system_state',
 	serviceType : 'pr2_pbd_interaction/GetNavSystemState'
 });
+
+var isPoseInitialized = false;
+
+// setup the initial pose publisher
+var initialPosePub = new ROSLIB.Topic({
+	ros : ros,
+	name : '/initialpose',
+	messageType : 'geometry_msgs/PoseWithCovarianceStamped'
+});
+/**
+   * Send the initial pose of the robot to the navigation stack with the given pose.
+   *
+   * @param pose - the initial pose
+*/
+function setInitialPose(pose) {
+    // create a pose with covariance stamped message
+    var initPoseMsg = new ROSLIB.Message({
+        header: {
+          frame_id: '/map',
+        },
+        pose: {
+          pose: pose,
+          covariance: [0.25, 0.0, 0.0, 0.0, 0.0, 0.0,
+                        0.0, 0.25, 0.0, 0.0, 0.0, 0.0,
+                        0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                        0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                        0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                        0.0, 0.0, 0.0, 0.0, 0.0, 0.06]
+        }
+
+    });
+    initialPosePub.publish(initPoseMsg);
+}
+
+/**
+   * Sets the current location with the given pose.
+*/
+function setLocation(pose) {
+    navPub.publish(new ROSLIB.Message({
+        command: "set-pose",
+        pose: pose
+    }));
+}
 
 function init() {
     ros.on("error", function() {
@@ -48,6 +97,21 @@ function init() {
       withOrientation : true,
       serverName : '/pr2_move_base'
     });
+    NAV2D.Navigator.processPose = NAV2D.Navigator.sendGoal;
+
+    // Setup the controls for the map.
+    document.querySelector("#setGoalRadioBtn").addEventListener("click", function() {
+		NAV2D.Navigator.processPose = NAV2D.Navigator.sendGoal;
+	});
+    document.querySelector("#setInitRadioBtn").addEventListener("click", function() {
+		NAV2D.Navigator.processPose = setInitialPose;
+		//NAV2D.Navigator.setProcessingFunction(setInitialPose);
+	});
+    document.querySelector("#setLocationRadioBtn").addEventListener("click", function() {
+		NAV2D.Navigator.processPose = setLocation;
+		//NAV2D.Navigator.setProcessingFunction(setLocation);
+	});
+
 
 	//hook up buttons with com attribute to navigation commands
 	[].slice.call(document.querySelectorAll("button[com]")).forEach(function(el) {
@@ -164,11 +228,33 @@ function init() {
 
 	};
 
+	var processPoseArray = function(poseArray) {
+	    if (isPoseInitialized == false) {
+	        isPoseInitialized = true;
+            var initWarningSpan = document.querySelector('div[id="initwarning"]');
+		    initwarning.style.display = "none";
+	    }
+        var localizedwarning = document.querySelector('div[id="localizedwarning"]');
+	    poses = poseArray.poses;
+	    if (poses.length < 600) {
+		    localizedwarning.style.display = "none";
+	    } else {
+		    localizedwarning.style.display = "inline-block";
+	    }
+	}
+
 	expListener.subscribe(function(state) {
 		drawState(state);
+	});
+
+	estimatedPoseListener.subscribe(function(poseArray) {
+		processPoseArray(poseArray);
 	});
 
 	expListenerSrvCli.callService(new ROSLIB.ServiceRequest({}), function(result) {
 		drawState(result.state);
 	});
+
+
+	//
   }
