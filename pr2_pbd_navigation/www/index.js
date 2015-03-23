@@ -29,6 +29,9 @@ var expListenerSrvCli = new ROSLIB.Service({
 });
 
 function init() {
+    ros.on("error", function() {
+        alert("Error connecting to the ROS server. App will not work.")
+    });
 
     // Create the main viewer.
     var viewer = new ROS2D.Viewer({
