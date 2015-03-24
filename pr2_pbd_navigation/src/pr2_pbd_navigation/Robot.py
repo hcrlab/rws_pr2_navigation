@@ -98,13 +98,6 @@ class Robot:
                 break
         rospy.loginfo('Done with base navigation.')
 
-        # Untuck arms and move to where they were.
-        rospy.loginfo("Untucking arms.")
-        goal = TuckArmsGoal()
-        goal.tuck_left = False
-        goal.tuck_right = False
-        self.tuck_arms_client.send_goal_and_wait(goal, rospy.Duration(30.0), rospy.Duration(5.0))
-
         # Verify that base succeeded
         if (self.nav_action_client.get_state() != GoalStatus.SUCCEEDED):
             rospy.logwarn('Aborting because base failed to move to pose.')
