@@ -90,9 +90,9 @@ function init() {
     });
 
     processPose = null;
-    if (document.querySelector("#setGoalRadioBtn").checked) {
-		processPose = NAV2D.Navigator.sendGoal;
-    } else if (document.querySelector("#setInitRadioBtn").checked) {
+    // By default use map as navigation tool: processPose == NAV2D.Navigator.sendGoal.
+    // If other controls are checked, change the function.
+    if (document.querySelector("#setInitRadioBtn").checked) {
 		processPose = setInitialPose;
 	} else if (document.querySelector("#setLocationRadioBtn").checked) {
 		processPose = setLocation;

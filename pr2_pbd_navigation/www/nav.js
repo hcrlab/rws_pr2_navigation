@@ -90,7 +90,6 @@ NAV2D.Navigator = function(options) {
   var actionName = options.actionName || 'move_base_msgs/MoveBaseAction';
   var withOrientation = options.withOrientation || false;
   this.rootObject = options.rootObject || new createjs.Container();
-  NAV2D.Navigator.processPose = options.processPose || null;
 
   // setup the actionlib client
   var actionClient = new ROSLIB.ActionClient({
@@ -137,6 +136,8 @@ NAV2D.Navigator = function(options) {
       that.rootObject.removeChild(goalMarker);
     });
   }
+
+  NAV2D.Navigator.processPose = options.processPose || NAV2D.Navigator.sendGoal;
 
   // get a handle to the stage
   var stage;
@@ -284,6 +285,9 @@ NAV2D.Navigator = function(options) {
           orientation : orientation
         });
         // process the pose (send the pose or set the initial pose or save that pose in locations)
+        if (NAV2D.Navigator.processPose == null) {
+          alert("null function");
+        }
         NAV2D.Navigator.processPose(pose);
       }
     };
