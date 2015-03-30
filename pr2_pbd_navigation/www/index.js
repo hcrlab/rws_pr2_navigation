@@ -148,7 +148,7 @@ function init() {
         var plugWarningSpan = document.querySelector('div[id="plugwarning"]');
 		if (state.discharging == 0) {
 		    toggleControls(false);
-		    plugWarningSpan.style.display = "inline-block";
+		    plugWarningSpan.style.display = "";
 		} else {
 		    toggleControls(true);
 		    plugWarningSpan.style.display = "none";
@@ -177,7 +177,6 @@ function init() {
 	});
 
 	var locListCont = document.querySelector("#locationList");
-	var curSpan = document.querySelector("#curLocation");
 
     var locationMarker = new ROS2D.NavigationArrow({
         size : 20,
@@ -203,6 +202,10 @@ function init() {
 			});
 			locListCont.appendChild(dv);
 		});
+		// If there were no saved locations, say so:
+		if (state.location_names.length == 0) {
+		    locListCont.innerHTML = "(none)"
+		}
 		if (state.current_location != -1) {
 		    // If a location is selected, enable and create buttons for its manipulation.
             document.querySelector("#renameBtn").removeAttribute("disabled");
@@ -244,7 +247,7 @@ function init() {
 	    if (poses.length < 600) {
 		    localizedwarning.style.display = "none";
 	    } else {
-		    localizedwarning.style.display = "inline-block";
+		    localizedwarning.style.display = "";
 	    }
 	}
 

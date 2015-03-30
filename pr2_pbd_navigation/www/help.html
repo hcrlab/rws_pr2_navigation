@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>PR2 Navigation App Help</title>
+</head>
+<body>
+    <a href="index.html">Back to the navigation app</a>
+    <p>
+        This app allows you to save locations on the map and make the robot navigate to those locations.
+    </p>
+    The <i>dashboard</i> shows notifications about the status of the robot. There are the following notifications:<br>
+    <ul>
+        <li><i>The PR2 is plugged in. Please unplug the PR2 before attempting navigation.</i>
+            The cable for the PR2 is plugged in, making it dangerous to navigate.
+            Unplug the cable from the outlet side, then from the robot side.
+        </li>
+        <li><i>The PR2 pose is not set. Please set the PR2 pose on the map.</i>
+            The robot doesn't know where it is located on the map.
+            Select <i>Initialize robot pose</i> in the map controls below, then click on the map on the spot
+            where the robot is currently located and drag to set the robot's orientation.
+        </li>
+        <li><i>The PR2 is not localized. Navigation may not work properly.</i>
+            The robot is not very sure of its location. If you see this warning and navigation does not work, try
+            setting a more accurate robot location on the map (see above). If that still doesn't work, open a terminal,
+            execute the command <i>realrobot</i>, then execute the command
+            <i>roslaunch pr2_navigation_global rviz_move_base.launch</i>.
+            In the rviz window that pops up, you'll need to set the pose of the robot.
+            <ul>
+                <li>Take note of where the robot is in the world.</li>
+                <li>Right click and drag to zoom on the map.</li>
+                <li>Click the "2D Pose Estimate" button in the rviz GUI window.</li>
+                <li>Left click on the map at the location of the robot and drag to set orientation.</li>
+                <li>Verify that the scans from the base laser of the robot (the white lines)
+                    match up fairly well with the map of the environment. (It's easiest to see with a top-down view.)</li>
+            </ul>
+        </li>
+    </ul>
+    <p>
+        <i>Saved locations</i> shows the list of locations that are saved in the system. The currently selected location
+        is colored dark grey. A location is the combination of the pose and orientation on the map and the name for it
+        (e.g. "in front of the kitchen table").
+    </p>
+    The buttons work as follows:<br>
+    <ul>
+        <li><i>Delete this location</i> Deletes the currently selected location. This action cannot be undone.</li>
+        <li><i>Navigate to this location</i> Makes the robot drive to the currently selected location.</li>
+        <li><i>Rename location</i> Changes the name of the currently selected location.</li>
+        <li><i>Set location to the current pose</i> Stores the current pose of the robot in the currently selected
+        location (the previous value of the location will be overwritten).</li>
+        <li><i>Create new location</i> Adds a new location to the list, initialized to the current pose of the robot.</li>
+    </ul>
+    <br>
+    The map allows you to specify a pose and an orientation on the map by clicking and dragging. The map has 3 modes:<br>
+    <ul>
+        <li><i>Navigate</i> The robot will navigate to the specified pose and orientation.</li>
+        <li><i>Initialize robot pose</i> This will provide an initial pose for the robot (use this if you have warnings
+        in the dashboard described above).</li>
+        <li><i>Set location</i> The specified pose and orientation will be stored in the currently selected location
+        (the previous value of this location will be overwritten).</li>
+    </ul>
+</body>
+</html>

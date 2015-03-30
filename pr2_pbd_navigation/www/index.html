@@ -75,22 +75,29 @@
     </head>
 
     <body onload="init()">
-    <div id="plugwarning">
-        <h1>The PR2 is plugged in. Please unplug the PR2 before attempting navigation.</h1>
-    </div>
-    <div id="initwarning">
-        <h1>The PR2 pose is not set. Please set the PR2 pose on the map.</h1>
-    </div>
-    <div id="localizedwarning">
-        <h1>The PR2 is not localized. Please open RVIZ and localize the robot.</h1>
-    </div>
+    <div align="right"><a href="help.html">Help</a></div>
+    <form>
+        <fieldset>
+            <legend>Dashboard:</legend>
+            <div id="plugwarning">
+                <b>The PR2 is plugged in. Please unplug the PR2 before attempting navigation.</b><br/>
+            </div>
+            <div id="initwarning">
+                <b>The PR2 pose is not set. Please set the PR2 pose on the map.</b><br/>
+            </div>
+            <div id="localizedwarning">
+                <b>The PR2 is not localized. Navigation may not work properly.</b>
+            </div>
+        </fieldset>
+    </form>
+    <br>
     <div id="controls">
         <table>
             <tr>
-                <td id="locationList">
-                </td>
-                <td id="curLocation">
-                </td>
+                <th>Saved locations</th>
+            </tr>
+            <tr>
+                <td id="locationList"></td>
             </tr>
         </table>
         <br>
