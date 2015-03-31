@@ -91,37 +91,44 @@
         </fieldset>
     </form>
     <br>
-    <div id="controls">
-        <table>
-            <tr>
-                <th>Saved locations</th>
-            </tr>
-            <tr>
-                <td id="locationList"></td>
-            </tr>
-        </table>
-        <br>
-        <button com="delete-current" id="deleteBtn">Delete this location</button>
-        <button com="navigate-to-current" id="navigateBtn">Navigate to this location</button>
-        <br>
-        <button id="renameBtn">Rename location</button>
-        <div id="overlay" style="display: none;">
-            <div id="renameBox">
-                <input id="newName" />
-                <button id="doRename">Rename</button>
-                <button id="cancelRename">Cancel</button>
-            </div>
+    <table>
+        <tr>
+            <th>Saved locations</th>
+        </tr>
+        <tr>
+            <td id="locationList"></td>
+        </tr>
+    </table>
+    <br>
+    <button com="delete-current" id="deleteBtn">Delete this location</button>
+    <button com="navigate-to-current" id="navigateBtn">Navigate to this location</button>
+    <br>
+    <button id="renameBtn">Rename location</button>
+    <div id="overlay" style="display: none;">
+        <div id="renameBox">
+            <input id="newName" />
+            <button id="doRename">Rename</button>
+            <button id="cancelRename">Cancel</button>
         </div>
-        <button com="record-location" id="recordBtn">Set location to the current pose</button>
-        <br>
-        <button com="new-location">Create new location</button>
-        <h1>Map</h1>
-        <form id="mapcontrols" action="">
-            <input type="radio" name="maptype" id="setGoalRadioBtn" checked="true">Navigate<br>
-            <input type="radio" name="maptype" id="setInitRadioBtn">Initialize robot pose<br>
-            <input type="radio" name="maptype" id="setLocationRadioBtn">Set location
-        </form>
-        <div id="nav"></div>
+    </div>
+    <button com="record-location" id="recordBtn">Set location to the current pose</button>
+    <br>
+    <button com="new-location">Create new location</button>
+    <div style="width: 100%; overflow: hidden;">
+        <div id="nav" style="width: 800px; float: left;"></div>
+        <div style="margin-left: 820px;">
+            <form id="mapcontrols" action="">
+                <fieldset>
+                    <legend>Map modes:</legend>
+                    <input type="radio" name="maptype" id="setGoalRadioBtn" checked="true">Navigate<br>
+                    <input type="radio" name="maptype" id="setInitRadioBtn">Initialize robot pose<br>
+                    <input type="radio" name="maptype" id="setLocationRadioBtn">Set location
+                </fieldset>
+            </form>
+            <img src="images/current_robot_pose.jpg"> Current robot pose
+            <img src="images/saved_location.jpg"> Currently selected location
+            <img src="images/nav_goal.jpg"> Navigation goal
+        </div>
     </div>
     </body>
 </html>

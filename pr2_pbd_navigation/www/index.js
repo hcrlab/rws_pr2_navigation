@@ -134,8 +134,6 @@ function init() {
 
     function toggleControls(turnOn) {
         // Enable or disable navigation-related controls.
-        var controlsSpan = document.querySelector('div[id="controls"]');
-//		controlsSpan.style.display = turnOn ? "inline-block" : "none";
         if (turnOn) {
             document.querySelector("#navigateBtn").removeAttribute("disabled");
         } else {
