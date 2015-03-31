@@ -71,24 +71,30 @@
 			}
 		}
 
+        .fieldset-auto-width {
+            display: inline-block;
+        }
+
 		</style>
     </head>
 
     <body onload="init()">
     <div align="right"><a href="help.html">Help</a></div>
     <form>
-        <fieldset>
-            <legend>Dashboard:</legend>
-            <div id="plugwarning">
-                <b>The PR2 is plugged in. Please unplug the PR2 before attempting navigation.</b><br/>
-            </div>
-            <div id="initwarning">
-                <b>The PR2 pose is not set. Please set the PR2 pose on the map.</b><br/>
-            </div>
-            <div id="localizedwarning">
-                <b>The PR2 is not localized. Navigation may not work properly.</b>
-            </div>
-        </fieldset>
+        <div>
+            <fieldset class="fieldset-auto-width">
+                <legend>Dashboard:</legend>
+                <div id="plugwarning">
+                    <b>The PR2 is plugged in. Please unplug the PR2 before attempting navigation.</b><br/>
+                </div>
+                <div id="initwarning">
+                    <b>The PR2 pose is not set. Please set the PR2 pose on the map.</b><br/>
+                </div>
+                <div id="localizedwarning">
+                    <b>The PR2 is not localized. Navigation may not work properly.</b>
+                </div>
+            </fieldset>
+        </div>
     </form>
     <br>
     <table>
@@ -118,16 +124,21 @@
         <div id="nav" style="width: 800px; float: left;"></div>
         <div style="margin-left: 820px;">
             <form id="mapcontrols" action="">
-                <fieldset>
-                    <legend>Map modes:</legend>
-                    <input type="radio" name="maptype" id="setGoalRadioBtn" checked="true">Navigate<br>
-                    <input type="radio" name="maptype" id="setInitRadioBtn">Initialize robot pose<br>
-                    <input type="radio" name="maptype" id="setLocationRadioBtn">Set location
-                </fieldset>
+                <div>
+                    <fieldset class="fieldset-auto-width">
+                        <legend>Map modes:</legend>
+                        <input type="radio" name="maptype" id="setGoalRadioBtn" checked="true">Navigate<br>
+                        <input type="radio" name="maptype" id="setInitRadioBtn">Initialize robot pose<br>
+                        <input type="radio" name="maptype" id="setLocationRadioBtn">Set location
+                        <br/><br/>
+                        <img src="images/current_robot_pose.jpg"> Current robot pose
+                        <img src="images/saved_location.jpg"> Currently selected location
+                        <img src="images/nav_goal.jpg"> Navigation goal
+                        <br/><br/>
+                        To set a location on the map, click in the desired place and drag to set orientation.
+                    </fieldset>
+                </div>
             </form>
-            <img src="images/current_robot_pose.jpg"> Current robot pose
-            <img src="images/saved_location.jpg"> Currently selected location
-            <img src="images/nav_goal.jpg"> Navigation goal
         </div>
     </div>
     </body>
