@@ -21,7 +21,7 @@ class Session:
     """This class holds and maintains the list of locations"""
 
     session = None
-    data_directory = rospy.get_param('/pr2_pbd_navigation/dataRoot', '/home/sonyaa/pbd_location_saved/')
+    data_directory = rospy.get_param('/pr2_pbd_navigation/locationsRoot')
     file_extension = ".yaml"
 
     def __init__(self):

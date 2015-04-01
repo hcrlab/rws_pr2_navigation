@@ -1,11 +1,15 @@
 <?xml version="1.0"?>
 <launch>
+  <arg name="dataRoot" default="$(env HOME)" />
+  <arg name="locationsRoot" default="$(arg dataRoot)/pbd_location_saved/" />
   <arg name="map_file" default="$(find pr2_pbd_navigation)/config/map.yaml" />
 
   <include file="$(find pr2_2dnav)/launch/pr2_2dnav.launch" />
   <node name="robot_pose_publisher" pkg="robot_pose_publisher" type="robot_pose_publisher" />
 
-  <node name="pr2_pbd_navigation" pkg="pr2_pbd_navigation" type="main.py" output="screen" />
+  <node name="pr2_pbd_navigation" pkg="pr2_pbd_navigation" type="main.py" output="screen">
+    <param name="locationsRoot" value="$(arg locationsRoot)" />
+  </node>
 
   <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" respawn="true" />
 
