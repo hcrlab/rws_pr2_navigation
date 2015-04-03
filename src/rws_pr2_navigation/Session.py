@@ -1,7 +1,7 @@
 """Everything related to an experiment session"""
 from geometry_msgs.msg import Pose
 import roslib
-roslib.load_manifest('pr2_pbd_navigation')
+roslib.load_manifest('rws_pr2_navigation')
 from functools import partial
 import os
 from os import listdir
@@ -10,18 +10,18 @@ import yaml
 
 import rospy
 
-from pr2_pbd_navigation.msg import NavSystemState
-from pr2_pbd_navigation.srv import GetNavSystemState
-from pr2_pbd_navigation.srv import GetNavSystemStateResponse
-from pr2_pbd_navigation.msg import Location
-from pr2_pbd_navigation.Robot import Robot
+from rws_pr2_navigation.msg import NavSystemState
+from rws_pr2_navigation.srv import GetNavSystemState
+from rws_pr2_navigation.srv import GetNavSystemStateResponse
+from rws_pr2_navigation.msg import Location
+from rws_pr2_navigation.Robot import Robot
 
 
 class Session:
     """This class holds and maintains the list of locations"""
 
     session = None
-    data_directory = rospy.get_param('/pr2_pbd_navigation/locationsRoot')
+    data_directory = rospy.get_param('/rws_pr2_navigation/locationsRoot')
     file_extension = ".yaml"
 
     def __init__(self):

@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>pr2_pbd_navigation</name>
+  <name>rws_pr2_navigation</name>
   <version>0.0.0</version>
-  <description>The pr2_pbd_navigation package</description>
+  <description>The rws_pr2_navigation package</description>
 
   <maintainer email="sonyaa@cs.washington.edu">Sonya Alexandrova</maintainer>
 

@@ -6,7 +6,7 @@ var ros = new ROSLIB.Ros({
 var navPub = new ROSLIB.Topic({
 	ros : ros,
 	name : '/navigation_command',
-	messageType : 'pr2_pbd_navigation/NavigationCommand'
+	messageType : 'rws_pr2_navigation/NavigationCommand'
 });
 
 
@@ -19,7 +19,7 @@ var batteryStateListener = new ROSLIB.Topic({
 var expListener = new ROSLIB.Topic({
 	ros : ros,
 	name : '/nav_system_state',
-	messageType : 'pr2_pbd_navigation/NavSystemState'
+	messageType : 'rws_pr2_navigation/NavSystemState'
 });
 
 var estimatedPoseListener = new ROSLIB.Topic({

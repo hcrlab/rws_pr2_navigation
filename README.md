@@ -20,7 +20,7 @@ copy bin folders from groovy to hydro for pr2_navigation_self_filter and semanti
 If launching the app on its own (not as part of RWS):
 on the robot, run 
 
-*roslaunch pr2_pbd_navigation app.launch*
+*roslaunch rws_pr2_navigation app.launch*
 
 and
 
@@ -28,6 +28,6 @@ and
 
 and 
 
-*rosrun pr2_pbd_navigation http_server.py*
+*rosrun rws_pr2_navigation http_server.py*
 
 Then open *http://c1.cs.washington.edu:8000/* in the browser of your choice.

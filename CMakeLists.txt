@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(pr2_pbd_navigation)
+project(rws_pr2_navigation)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -82,8 +82,8 @@ generate_messages(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS src/pr2_pbd_navigation
-  LIBRARIES pr2_pbd_navigation
+  INCLUDE_DIRS src/rws_pr2_navigation
+  LIBRARIES rws_pr2_navigation
   CATKIN_DEPENDS rospy
   DEPENDS system_lib
 )

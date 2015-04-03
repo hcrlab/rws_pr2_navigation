@@ -1,11 +1,11 @@
 """Main interaction loop"""
 import roslib
-roslib.load_manifest('pr2_pbd_navigation')
+roslib.load_manifest('rws_pr2_navigation')
 import time
 import rospy
-from pr2_pbd_navigation.Session import Session
-from pr2_pbd_navigation.Robot import Robot
-from pr2_pbd_navigation.msg import NavigationCommand
+from rws_pr2_navigation.Session import Session
+from rws_pr2_navigation.Robot import Robot
+from rws_pr2_navigation.msg import NavigationCommand
 
 class Interaction:
     """ Finite state machine for the human interaction """
