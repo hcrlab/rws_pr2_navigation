@@ -21,8 +21,38 @@
 		html, body {
 			width: 100%;
 			height: 100%;
-			margin: 0;
+			margin-left: 8px;
 			padding: 0;
+		        font-family: sans-serif;
+		}
+		
+		h1 {
+		        font-size: 18px;
+		}
+
+		ul {
+		        height: 300px;
+		        list-style: none;
+		        padding: 0px;
+		        margin: 0px;
+		        overflow: scroll;
+		}
+
+		#notifications {
+		   padding-left: 12px;
+		}
+
+		#notifications div {
+		  font-size: 14px;
+		  height: 24px;
+		}
+
+		#plugwarning, #initwarning, #localizedwarning {
+		  color: #dd2288;
+		}
+		
+		#notifications img {
+		  vertical-align: middle;
 		}
 
 		#overlay {
@@ -47,20 +77,50 @@
 			background: black;
 		}
 		
+		#locationControls {
+		        width: 300px;
+		        border: solid 2px #333333;
+		}
+
 		#locationControls, #nav {
 		       float: left;
+		}
+		
+		#locationsTitle {
+		      text-align: center;
+		      height: 50px;
+		      line-height: 50px;
+		      background-color: #ffc107;
 		}
 
 		#locationList div {
 			background-color: #ddd;
 			color: #000;
-			border-radius: 5px;
-			min-height: 30px;
-			margin-bottom: 10px;
-			cursor: pointer;
+			height: 40px;
+			line-height: 40px;
+		        cursor: pointer;
+		        text-align: center;
+		        vertical-align: middle;
 		}
+		
+		#locationList div:hover {
+		       background-color: #999;
+		}
+
 		#locationList div.selected {
 			background-color:  #555;
+		}
+
+		#modeAndLegend {
+		  height: 80px;
+		}
+
+		#modeAndLegend form {
+		  float: left;
+		}
+
+		#legend {
+		  float: left;
 		}
 
 		@media (min-width: 800px) {
@@ -70,8 +130,7 @@
 
 			button {
 				height: 30px;
-				margin-bottom: 5px;
-				min-width: 30px;
+				width: 300px;
 			}
 		}
 
@@ -94,44 +153,62 @@
     <div id="notifications">
       <h1>Notifications</h1>
       <div id="plugwarning">
-	<b>The PR2 is plugged in</b><img src="images/info.png" class="info"><br/>
+	<span>The PR2 is plugged in</span>
+	<img src="images/info.png" class="info"><br/>
       </div>
       <div id="initwarning">
-	<b>The PR2 pose is not set</b><img src="images/info.png" class="info"><br/>
+	<span>The PR2 pose is not set</span>
+	<img src="images/info.png" class="info"><br/>
       </div>
       <div id="localizedwarning">
-	<b>The PR2 is not localized</b><img src="images/info.png" class="info">
+	<span>The PR2 is not localized</span>
+	<img src="images/info.png" class="info">
       </div>
     </div>
     
     <br>
 
     
+     <div id="modeAndLegend">
+      <form id="mapcontrols" action="">
+        <div>
+          <div>
+            <div>Modes</div>
+            <input type="radio" name="maptype" id="setGoalRadioBtn" checked="true">Navigate
+            <input type="radio" name="maptype" id="setInitRadioBtn">Initialize robot pose
+            <input type="radio" name="maptype" id="setLocationRadioBtn">Set location
+          </div>
+            To set a location on the map, click in the desired place and drag to set orientation.
+        </div>
+      </form>
+            
+    </div>
     <div id="locationAndMap">
       <!-- Locations Panel -->
-      <div id="locationControls">
-	<!-- TODO: change to unordered list -->
-	<table>
-          <tr>
-            <th>Saved locations</th>
-          </tr>
-          <tr>
-            <td id="locationList"></td>
-          </tr>
-	</table>
-	<button com="delete-current" id="deleteBtn">Delete this location</button></br>
-	<button com="navigate-to-current" id="navigateBtn">Navigate to this location</button></br>
-	<button id="renameBtn">Rename location</button></br>
-	<div id="overlay" style="display: none;">
-          <div id="renameBox">
-            <input id="newName" />
-            <button id="doRename">Rename</button>
-            <button id="cancelRename">Cancel</button>
-          </div>
+      <div>
+	<div id="locationControls">
+	  <div id="savedLocations">
+            <div id="locationsTitle">Saved Locations</div>
+            <ul id="locationList"></ul>
+	  </div>
+	  <button com="delete-current" id="deleteBtn">Delete</button></br>
+	  <button com="navigate-to-current" id="navigateBtn">Navigate to selected</button></br>
+	  <button id="renameBtn">Rename</button></br>
+	  <div id="overlay" style="display: none;">
+            <div id="renameBox">
+              <input id="newName" />
+              <button id="doRename">Rename</button>
+              <button id="cancelRename">Cancel</button>
+            </div>
+	  </div>
+	  <button com="record-location" id="recordBtn">Set to current pose</button></br>
+	  <button com="new-location">Create new</button>
+          <div>
+	    <img src="images/current_robot_pose.jpg"> Current robot pose <br/>
+            <img src="images/saved_location.jpg"> Currently selected location<br/>
+            <img src="images/nav_goal.jpg"> Navigation goal
+	  </div>
 	</div>
-	<button com="record-location" id="recordBtn">Set location to the current pose</button></br>
-	<button com="new-location">Create new location</button>
-      </div>
       <!-- Map Panel -->
       <!-- Note: set map size so it fits fully in the browser? would need to add a zoom option in case it's too small -->
       <div id="nav" style="width: 800px; float: left;"></div>

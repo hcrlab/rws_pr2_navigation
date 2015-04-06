@@ -82,6 +82,14 @@ function init() {
         alert("Error connecting to the ROS server. App will not work.")
     });
 
+    ros.on('connection', function() {
+	console.log('Connected to websocket server.');
+    });
+
+    ros.on('close', function() {
+	console.log('Connection to websocket server closed.');
+    });
+
     // Create the main viewer.
     var viewer = new ROS2D.Viewer({
       divID : 'nav',
@@ -198,7 +206,9 @@ function init() {
 					param: loc_n
 				}));
 			});
-			locListCont.appendChild(dv);
+		    var li = document.createElement("li");
+		    li.appendChild(dv);
+		    locListCont.appendChild(li);
 		});
 		// If there were no saved locations, say so:
 		if (state.location_names.length == 0) {
