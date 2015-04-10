@@ -76,10 +76,21 @@
 			margin-right: auto;
 			background: black;
 		}
-		
+
+		#key {
+		  border-top: solid 5px #333333;
+		}
+
+		#key div {
+		  margin-top: 16px;
+		  margin-left: 8px;
+		  margin-bottom: 20px;
+		}
+
 		#locationControls {
 		        width: 300px;
 		        border: solid 2px #333333;
+		        height: 796px;
 		}
 
 		#locationControls, #nav {
@@ -111,11 +122,11 @@
 			background-color:  #555;
 		}
 
-		#modeAndLegend {
+		#mode {
 		  height: 80px;
 		}
 
-		#modeAndLegend form {
+		#mode form {
 		  float: left;
 		}
 
@@ -129,22 +140,34 @@
 			}
 
 			button {
-				height: 30px;
+				height: 42px;
 				width: 300px;
+		                background-color: #f2f5f6; 
+		                background-image: -webkit-gradient(linear, left top, left bottom, from(#f2f5f6), to(#c8d7dc));
+		                border: none;
 			}
+		       
+                        button:hover {
+		                background-color: #c4ced1; 
+		                background-image: -webkit-gradient(linear, left top, left bottom, from(#c4ced1), to(#a9c0c8));
+		        }
 		}
 
-	.fieldset-auto-width {
-		display: inline-block;
-	}
-	
-	.info {
-		width: 20px;
-		height: 20px;
-		margin-left: 4px;
-	}
+		.arrow {
+		  vertical-align: middle;
+		  margin-right: 8px;
+		}
 
-		</style>
+		.fieldset-auto-width {
+	          display: inline-block;
+		}
+	
+		.info {
+		  width: 20px;
+		  height: 20px;
+		  margin-left: 4px;
+		}
+	</style>
     </head>
 
     <body onload="init()">
@@ -169,16 +192,13 @@
     <br>
 
     
-     <div id="modeAndLegend">
+     <div id="mode">
       <form id="mapcontrols" action="">
         <div>
-          <div>
-            <div>Modes</div>
-            <input type="radio" name="maptype" id="setGoalRadioBtn" checked="true">Navigate
-            <input type="radio" name="maptype" id="setInitRadioBtn">Initialize robot pose
-            <input type="radio" name="maptype" id="setLocationRadioBtn">Set location
-          </div>
-            To set a location on the map, click in the desired place and drag to set orientation.
+          <div>Modes<img src="images/info.png" class="info"></div>
+          <input type="radio" name="maptype" id="setGoalRadioBtn" checked="true">Navigate
+          <input type="radio" name="maptype" id="setInitRadioBtn">Initialize robot pose
+          <input type="radio" name="maptype" id="setLocationRadioBtn">Set location
         </div>
       </form>
             
@@ -203,34 +223,16 @@
 	  </div>
 	  <button com="record-location" id="recordBtn">Set to current pose</button></br>
 	  <button com="new-location">Create new</button>
-          <div>
-	    <img src="images/current_robot_pose.jpg"> Current robot pose <br/>
-            <img src="images/saved_location.jpg"> Currently selected location<br/>
-            <img src="images/nav_goal.jpg"> Navigation goal
+          <div id="key">
+	    <div>Key</div>
+	    <div class="item"><img class="arrow" src="images/current_robot_pose.jpg">Current Robot Pose</div>
+            <div class="item"><img class="arrow" src="images/saved_location.jpg">Currently selected location</div>
+            <div class="item"><img class="arrow" src="images/nav_goal.jpg">Navigation goal</div>
 	  </div>
 	</div>
       <!-- Map Panel -->
       <!-- Note: set map size so it fits fully in the browser? would need to add a zoom option in case it's too small -->
       <div id="nav" style="width: 800px; float: left;"></div>
-    </div>
-    <!-- Map Controls -->
-    <div>
-      <form id="mapcontrols" action="">
-        <div>
-          <fieldset class="fieldset-auto-width">
-            <legend>Map modes:</legend>
-            <input type="radio" name="maptype" id="setGoalRadioBtn" checked="true">Navigate<br>
-            <input type="radio" name="maptype" id="setInitRadioBtn">Initialize robot pose<br>
-            <input type="radio" name="maptype" id="setLocationRadioBtn">Set location
-            <br/><br/>
-            <img src="images/current_robot_pose.jpg"> Current robot pose
-            <img src="images/saved_location.jpg"> Currently selected location
-            <img src="images/nav_goal.jpg"> Navigation goal
-            <br/><br/>
-            To set a location on the map, click in the desired place and drag to set orientation.
-          </fieldset>
-        </div>
-      </form>
     </div>
   </body>
 </html>
