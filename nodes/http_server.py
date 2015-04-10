@@ -9,7 +9,7 @@ import rospy
 
 
 def server():
-    rospy.init_node('pr2_pbd_http_server')
+    rospy.init_node('rws_pr2_navigation_http_server')
 
     rospack = rospkg.RosPack()
 

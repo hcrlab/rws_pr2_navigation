@@ -31,7 +31,7 @@ var estimatedPoseListener = new ROSLIB.Topic({
 var expListenerSrvCli = new ROSLIB.Service({
 	ros : ros,
 	name : '/get_nav_system_state',
-	serviceType : 'pr2_pbd_interaction/GetNavSystemState'
+	serviceType : 'rws_pr2_navigation/GetNavSystemState'
 });
 
 var isPoseInitialized = false;
