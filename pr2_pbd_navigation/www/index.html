@@ -38,17 +38,14 @@
 		        overflow: scroll;
 		}
 
-		#notifications {
-		   padding-left: 12px;
-		}
-
 		#notifications div {
-		  font-size: 14px;
+		  font-size: 18px;
+		  font-weight: bold;
 		  height: 24px;
 		}
 
 		#plugwarning, #initwarning, #localizedwarning {
-		  color: #dd2288;
+		  color: #cc0000;
 		}
 		
 		#notifications img {
@@ -124,6 +121,7 @@
 
 		#mode {
 		  height: 80px;
+		  margin-bottom: 24px;
 		}
 
 		#mode form {
@@ -154,7 +152,7 @@
 		}
 
 		.arrow {
-		  vertical-align: middle;
+		  vertical-align: text-bottom;
 		  margin-right: 8px;
 		}
 
@@ -166,6 +164,7 @@
 		  width: 20px;
 		  height: 20px;
 		  margin-left: 4px;
+		  vertical-align: text-bottom;
 		}
 	</style>
     </head>
@@ -175,14 +174,28 @@
     
     <div id="notifications">
       <h1>Notifications</h1>
+      <dialog id="plugwarningdialog">
+	<p>The cable for the PR2 is plugged in, making it dangerous to navigate. Unplug the cable from the outlet side, then from the robot side.</p>
+	<button id="plugwarningclose">Close</button>
+      </dialog>
       <div id="plugwarning">
 	<span>The PR2 is plugged in</span>
 	<img src="images/info.png" class="info"><br/>
       </div>
+
+      <dialog id="initwarningdialog">
+	<p>The robot doesn't know where it is located on the map. Select Initialize robot pose in the map controls below, then click on the map on the spot where the robot is currently located and drag to set the robot's orientation.</p>
+	<button id="initwarningclose">Close</button>
+      </dialog>
       <div id="initwarning">
 	<span>The PR2 pose is not set</span>
 	<img src="images/info.png" class="info"><br/>
       </div>
+
+      <dialog id="localizedwarningdialog">
+	<p>The robot is not very sure of its location. If you see this warning and navigation does not work, try setting a more accurate robot location on the map.</p>
+	<button id="localizedwarningclose">Close</button>
+      </dialog>
       <div id="localizedwarning">
 	<span>The PR2 is not localized</span>
 	<img src="images/info.png" class="info">
@@ -195,7 +208,7 @@
      <div id="mode">
       <form id="mapcontrols" action="">
         <div>
-          <div>Modes<img src="images/info.png" class="info"></div>
+          <h1>Modes<img src="images/info.png" class="info"></h1>
           <input type="radio" name="maptype" id="setGoalRadioBtn" checked="true">Navigate
           <input type="radio" name="maptype" id="setInitRadioBtn">Initialize robot pose
           <input type="radio" name="maptype" id="setLocationRadioBtn">Set location

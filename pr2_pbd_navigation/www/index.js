@@ -165,6 +165,31 @@ function init() {
 	batteryStateListener.subscribe(processBatteryState);
 
 
+    // modals
+    var plug_modal = document.querySelector("#plugwarningdialog");
+    document.querySelector("#plugwarning>img").addEventListener("click", function() {
+	plug_modal.showModal();
+    });
+    document.querySelector("#plugwarningclose").addEventListener("click", function() {
+	plug_modal.close();
+    });
+
+    var init_modal = document.querySelector("#initwarningdialog");
+    document.querySelector("#initwarning>img").addEventListener("click", function() {
+	init_modal.showModal();
+    });
+    document.querySelector("#initwarningclose").addEventListener("click", function() {
+	init_modal.close();
+    });
+
+    var localized_modal = document.querySelector("#localizedwarningdialog");
+    document.querySelector("#localizedwarning>img").addEventListener("click", function() {
+	localized_modal.showModal();
+    });
+    document.querySelector("#localizedwarningclose").addEventListener("click", function() {
+	localized_modal.close();
+    });
+    
 	var overlayDiv = document.querySelector("#overlay");
 	var newNameInp = document.querySelector("#newName");
 
