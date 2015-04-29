@@ -42,6 +42,10 @@ var initialPosePub = new ROSLIB.Topic({
 	name : '/initialpose',
 	messageType : 'geometry_msgs/PoseWithCovarianceStamped'
 });
+
+// for detecting single vs double clicks on saved locations
+var clicks = 0;
+
 /**
    * Send the initial pose of the robot to the navigation stack with the given pose.
    *
@@ -160,6 +164,52 @@ function init() {
 		    plugWarningSpan.style.display = "none";
 		}
     }
+    
+    function handleLocationClick(self, loc_n) {
+	clicks++;
+	if (clicks === 1) {
+	    timer = setTimeout(function() {
+		navPub.publish(new ROSLIB.Message({
+		    command: "switch-to-location",
+		    param: loc_n
+		}));
+		clicks = 0;
+	    }, 500);
+	} else {
+	    clearTimeout(timer);    //prevent single-click action
+	    rename(self);  //perform double-click action
+	    clicks = 0;
+	}
+    }    
+
+    function rename(self) {
+	var editableText = document.createElement("textarea");
+	editableText.value = self.innerHTML;
+	self.parentNode.replaceChild(editableText, self);
+	editableText.focus();
+	editableText.addEventListener("keyup", function() { renameEnter(editableText) });
+	editableText.addEventListener("blur", function() { renameBlurred(editableText) });
+    }
+    
+    function renameEnter(self) {
+	if (window.event.keyCode == 13) {
+	    renameBlurred(self);
+	}
+    }
+
+    function renameBlurred(self) {
+	var new_name = self.value;
+	var dv = document.createElement("div");
+	dv.innerHTML = new_name;
+	self.parentNode.replaceChild(dv, self);
+	dv.addEventListener("click", function() {
+	    handleLocationClick(this, new_name);
+	}); 
+	navPub.publish(new ROSLIB.Message({
+			command: "name-location",
+			param: new_name
+	}));
+    }
 
 
 	batteryStateListener.subscribe(processBatteryState);
@@ -189,25 +239,25 @@ function init() {
     document.querySelector("#localizedwarningclose").addEventListener("click", function() {
 	localized_modal.close();
     });
+   
+    var overlayDiv = document.querySelector("#overlay");
+    var newNameInp = document.querySelector("#newName");
+
+    document.querySelector("#renameBtn").addEventListener("click", function() {
+	overlayDiv.style.display = "";
+    });
+    document.querySelector("#doRename").addEventListener("click", function() {
+	navPub.publish(new ROSLIB.Message({
+	    command: "name-location",
+	    param: newNameInp.value
+	}));
+	overlayDiv.style.display = "none";
+    });
+    document.querySelector("#cancelRename").addEventListener("click", function() {
+	overlayDiv.style.display = "none";
+    });
     
-	var overlayDiv = document.querySelector("#overlay");
-	var newNameInp = document.querySelector("#newName");
-
-	document.querySelector("#renameBtn").addEventListener("click", function() {
-		overlayDiv.style.display = "";
-	});
-	document.querySelector("#doRename").addEventListener("click", function() {
-		navPub.publish(new ROSLIB.Message({
-			command: "name-location",
-			param: newNameInp.value
-		}));
-		overlayDiv.style.display = "none";
-	});
-	document.querySelector("#cancelRename").addEventListener("click", function() {
-		overlayDiv.style.display = "none";
-	});
-
-	var locListCont = document.querySelector("#locationList");
+    var locListCont = document.querySelector("#locationList");
 
     var locationMarker = new ROS2D.NavigationArrow({
         size : 20,
@@ -217,7 +267,6 @@ function init() {
     });
     locationMarker.visible = false;
     viewer.scene.addChild(locationMarker);
-
 	// Code for drawing the list of locations.
 	var drawState = function(state) {
 		//draw location list
@@ -225,12 +274,9 @@ function init() {
 		state.location_names.forEach(function(loc_n) {
 			var dv = document.createElement("div");
 			dv.innerHTML = loc_n;
-			dv.addEventListener("click", function() {
-				navPub.publish(new ROSLIB.Message({
-					command: "switch-to-location",
-					param: loc_n
-				}));
-			});
+		    dv.addEventListener("click", function() {
+			handleLocationClick(this, loc_n);
+		    });
 		    var li = document.createElement("li");
 		    li.appendChild(dv);
 		    locListCont.appendChild(li);
