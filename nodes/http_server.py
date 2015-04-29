@@ -9,11 +9,11 @@ import rospy
 
 
 def server():
-    rospy.init_node('pr2_pbd_http_server')
+    rospy.init_node('rws_pr2_navigation_http_server')
 
     rospack = rospkg.RosPack()
 
-    os.chdir(os.path.join(rospack.get_path('pr2_pbd_navigation'), "www"))
+    os.chdir(os.path.join(rospack.get_path('rws_pr2_navigation'), "www"))
 
     HandlerClass = SimpleHTTPRequestHandler
     ServerClass = BaseHTTPServer.HTTPServer

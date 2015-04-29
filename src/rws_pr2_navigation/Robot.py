@@ -10,7 +10,7 @@ from tf import TransformListener
 import tf
 import time
 
-roslib.load_manifest('pr2_pbd_navigation')
+roslib.load_manifest('rws_pr2_navigation')
 
 
 class Robot:
