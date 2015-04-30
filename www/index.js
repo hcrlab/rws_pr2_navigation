@@ -240,23 +240,6 @@ function init() {
 	localized_modal.close();
     });
    
-    var overlayDiv = document.querySelector("#overlay");
-    var newNameInp = document.querySelector("#newName");
-
-    document.querySelector("#renameBtn").addEventListener("click", function() {
-	overlayDiv.style.display = "";
-    });
-    document.querySelector("#doRename").addEventListener("click", function() {
-	navPub.publish(new ROSLIB.Message({
-	    command: "name-location",
-	    param: newNameInp.value
-	}));
-	overlayDiv.style.display = "none";
-    });
-    document.querySelector("#cancelRename").addEventListener("click", function() {
-	overlayDiv.style.display = "none";
-    });
-    
     var locListCont = document.querySelector("#locationList");
 
     var locationMarker = new ROS2D.NavigationArrow({
@@ -269,50 +252,44 @@ function init() {
     viewer.scene.addChild(locationMarker);
 	// Code for drawing the list of locations.
 	var drawState = function(state) {
-		//draw location list
-		locListCont.innerHTML = "";
-		state.location_names.forEach(function(loc_n) {
-			var dv = document.createElement("div");
-			dv.innerHTML = loc_n;
-		    dv.addEventListener("click", function() {
-			handleLocationClick(this, loc_n);
-		    });
-		    var li = document.createElement("li");
-		    li.appendChild(dv);
-		    locListCont.appendChild(li);
+	    //draw location list
+	    locListCont.innerHTML = "";
+	    state.location_names.forEach(function(loc_n) {
+		var dv = document.createElement("div");
+		dv.innerHTML = loc_n;
+		dv.addEventListener("click", function() {
+		    handleLocationClick(this, loc_n);
 		});
-		// If there were no saved locations, say so:
-		if (state.location_names.length == 0) {
-		    locListCont.innerHTML = "(none)"
-		}
-		if (state.current_location != -1) {
-		    // If a location is selected, enable and create buttons for its manipulation.
-            document.querySelector("#renameBtn").removeAttribute("disabled");
-            document.querySelector("#recordBtn").removeAttribute("disabled");
-            document.querySelector("#deleteBtn").removeAttribute("disabled");
-            document.querySelector("#navigateBtn").removeAttribute("disabled");
+		var li = document.createElement("li");
+		li.appendChild(dv);
+		locListCont.appendChild(li);
+	    });
+	    // If there were no saved locations, say so:
+	    if (state.location_names.length == 0) {
+		locListCont.innerHTML = "(none)"
+	    }
+	    if (state.current_location != -1) {
+		// If a location is selected, enable and create buttons for its manipulation.
+		document.querySelector("#recordBtn").removeAttribute("disabled");
+		document.querySelector("#deleteBtn").removeAttribute("disabled");
+		document.querySelector("#navigateBtn").removeAttribute("disabled");
 
-		    locListCont.querySelectorAll("div")[state.current_location].className = "selected";
-		    newNameInp.value = state.location_names[state.current_location];
+		locListCont.querySelectorAll("div")[state.current_location].className = "selected";
 
-            // update the location on the map
-            locationMarker.x = state.current_location_pose.position.x;
-            locationMarker.y = -state.current_location_pose.position.y;
-            locationMarker.scaleX = 1.0 / viewer.scene.scaleX;
-            locationMarker.scaleY = 1.0 / viewer.scene.scaleY;
-            // change the angle
-            locationMarker.rotation = viewer.scene.rosQuaternionToGlobalTheta(state.current_location_pose.orientation);
-            locationMarker.visible = true;
-        } else {
-            // If no location is selected, disable buttons that operate on current location.
-            document.querySelector("#renameBtn").setAttribute("disabled", true);
-            document.querySelector("#recordBtn").setAttribute("disabled", true);
-            document.querySelector("#deleteBtn").setAttribute("disabled", true);
-            document.querySelector("#navigateBtn").setAttribute("disabled", true);
-
-        }
-
-
+		// update the location on the map
+		locationMarker.x = state.current_location_pose.position.x;
+		locationMarker.y = -state.current_location_pose.position.y;
+		locationMarker.scaleX = 1.0 / viewer.scene.scaleX;
+		locationMarker.scaleY = 1.0 / viewer.scene.scaleY;
+		// change the angle
+		locationMarker.rotation = viewer.scene.rosQuaternionToGlobalTheta(state.current_location_pose.orientation);
+		locationMarker.visible = true;
+	    } else {
+		// If no location is selected, disable buttons that operate on current location.
+		document.querySelector("#recordBtn").setAttribute("disabled", true);
+		document.querySelector("#deleteBtn").setAttribute("disabled", true);
+		document.querySelector("#navigateBtn").setAttribute("disabled", true);
+	    }
 	};
 
 	var processPoseArray = function(poseArray) {
