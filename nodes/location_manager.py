@@ -9,7 +9,7 @@ from rws_pr2_navigation.srv import GetSavedLocations
 from rws_pr2_navigation.srv import GetSavedLocationsResponse
 
 
-def get_saved_locations():
+def get_saved_locations(dummy):
     locations = Session.get_saved_locations()
     return GetSavedLocationsResponse(locations)
 
