@@ -18,3 +18,4 @@ if __name__ == '__main__':
     rospy.init_node('location_manager')
     s1 = rospy.Service('get_saved_locations', GetSavedLocations, get_saved_locations)
     # s2 = rospy.Service('execute_location_step', ExecuteLocationStep, execute_location_step)
+    rospy.spin()
