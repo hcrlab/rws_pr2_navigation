@@ -105,10 +105,10 @@ function init() {
     // By default use map as navigation tool: processPose == NAV2D.Navigator.sendGoal.
     // If other controls are checked, change the function.
     if (document.querySelector("#setInitRadioBtn").checked) {
-		processPose = setInitialPose;
-	} else if (document.querySelector("#setLocationRadioBtn").checked) {
-		processPose = setLocation;
-	}
+	processPose = setInitialPose;
+    } else if (document.querySelector("#setLocationRadioBtn").checked) {
+	processPose = setLocation;
+    }
 
     // Setup the nav client.
     var nav = NAV2D.OccupancyGridClientNav({
@@ -122,27 +122,25 @@ function init() {
 
     // Setup the controls for the map.
     document.querySelector("#setGoalRadioBtn").addEventListener("click", function() {
-		NAV2D.Navigator.processPose = NAV2D.Navigator.sendGoal;
-	});
+	NAV2D.Navigator.processPose = NAV2D.Navigator.sendGoal;
+    });
     document.querySelector("#setInitRadioBtn").addEventListener("click", function() {
-		NAV2D.Navigator.processPose = setInitialPose;
-	});
+	NAV2D.Navigator.processPose = setInitialPose;
+    });
     document.querySelector("#setLocationRadioBtn").addEventListener("click", function() {
-		NAV2D.Navigator.processPose = setLocation;
+	NAV2D.Navigator.processPose = setLocation;
+    });
+
+
+    //hook up buttons with com attribute to navigation commands
+    [].slice.call(document.querySelectorAll("button[com]")).forEach(function(el) {
+	el.addEventListener("click", function() {
+	    var relCom = new ROSLIB.Message({
+		command : el.getAttribute("com")
+	    });
+	    navPub.publish(relCom);
 	});
-
-
-	//hook up buttons with com attribute to navigation commands
-	[].slice.call(document.querySelectorAll("button[com]")).forEach(function(el) {
-		el.addEventListener("click", function() {
-			var relCom = new ROSLIB.Message({
-				command : el.getAttribute("com")
-			});
-			navPub.publish(relCom);
-		});
-	});
-
-
+    });
 
     function toggleControls(turnOn) {
         // Enable or disable navigation-related controls.
@@ -156,13 +154,13 @@ function init() {
     function processBatteryState(state) {
         // If robot is plugged in, display warning and turn off navigation controls.
         var plugWarningSpan = document.querySelector('div[id="plugwarning"]');
-		if (state.discharging == 0) {
-		    toggleControls(false);
-		    plugWarningSpan.style.display = "";
-		} else {
-		    toggleControls(true);
-		    plugWarningSpan.style.display = "none";
-		}
+	if (state.discharging == 0) {
+	    toggleControls(false);
+	    plugWarningSpan.style.display = "";
+	} else {
+	    toggleControls(true);
+	    plugWarningSpan.style.display = "none";
+	}
     }
     
     function handleLocationClick(self, loc_n) {
@@ -211,9 +209,7 @@ function init() {
 	}));
     }
 
-
-	batteryStateListener.subscribe(processBatteryState);
-
+    batteryStateListener.subscribe(processBatteryState);
 
     // modals
     var plug_modal = document.querySelector("#plugwarningdialog");
@@ -250,75 +246,73 @@ function init() {
     });
     locationMarker.visible = false;
     viewer.scene.addChild(locationMarker);
-	// Code for drawing the list of locations.
-	var drawState = function(state) {
-	    //draw location list
-	    locListCont.innerHTML = "";
-	    state.location_names.forEach(function(loc_n) {
-		var dv = document.createElement("div");
-		dv.innerHTML = loc_n;
-		dv.addEventListener("click", function() {
-		    handleLocationClick(this, loc_n);
-		});
-		var li = document.createElement("li");
-		li.appendChild(dv);
-		locListCont.appendChild(li);
+    // Code for drawing the list of locations.
+    var drawState = function(state) {
+	//draw location list
+	locListCont.innerHTML = "";
+	state.location_names.forEach(function(loc_n) {
+	    var dv = document.createElement("div");
+	    dv.innerHTML = loc_n;
+	    dv.addEventListener("click", function() {
+		handleLocationClick(this, loc_n);
 	    });
-	    // If there were no saved locations, say so:
-	    if (state.location_names.length == 0) {
-		locListCont.innerHTML = "(none)"
-	    }
-	    if (state.current_location != -1) {
-		// If a location is selected, enable and create buttons for its manipulation.
-		document.querySelector("#recordBtn").removeAttribute("disabled");
-		document.querySelector("#deleteBtn").removeAttribute("disabled");
-		document.querySelector("#navigateBtn").removeAttribute("disabled");
-
-		locListCont.querySelectorAll("div")[state.current_location].className = "selected";
-
-		// update the location on the map
-		locationMarker.x = state.current_location_pose.position.x;
-		locationMarker.y = -state.current_location_pose.position.y;
-		locationMarker.scaleX = 1.0 / viewer.scene.scaleX;
-		locationMarker.scaleY = 1.0 / viewer.scene.scaleY;
-		// change the angle
-		locationMarker.rotation = viewer.scene.rosQuaternionToGlobalTheta(state.current_location_pose.orientation);
-		locationMarker.visible = true;
-	    } else {
-		// If no location is selected, disable buttons that operate on current location.
-		document.querySelector("#recordBtn").setAttribute("disabled", true);
-		document.querySelector("#deleteBtn").setAttribute("disabled", true);
-		document.querySelector("#navigateBtn").setAttribute("disabled", true);
-	    }
-	};
-
-	var processPoseArray = function(poseArray) {
-	    if (isPoseInitialized == false) {
-	        isPoseInitialized = true;
-            var initWarningSpan = document.querySelector('div[id="initwarning"]');
-		    initwarning.style.display = "none";
-	    }
-        var localizedwarning = document.querySelector('div[id="localizedwarning"]');
-	    poses = poseArray.poses;
-	    if (poses.length < 600) {
-		    localizedwarning.style.display = "none";
-	    } else {
-		    localizedwarning.style.display = "";
-	    }
+	    var li = document.createElement("li");
+	    li.appendChild(dv);
+	    locListCont.appendChild(li);
+	});
+	// If there were no saved locations, say so:
+	if (state.location_names.length == 0) {
+	    locListCont.innerHTML = "(none)"
 	}
+	if (state.current_location != -1) {
+	    // If a location is selected, enable and create buttons for its manipulation.
+	    document.querySelector("#recordBtn").removeAttribute("disabled");
+	    document.querySelector("#deleteBtn").removeAttribute("disabled");
+	    document.querySelector("#navigateBtn").removeAttribute("disabled");
 
-	expListener.subscribe(function(state) {
-		drawState(state);
-	});
+	    locListCont.querySelectorAll("div")[state.current_location].className = "selected";
 
-	estimatedPoseListener.subscribe(function(poseArray) {
-		processPoseArray(poseArray);
-	});
+	    // update the location on the map
+	    locationMarker.x = state.current_location_pose.position.x;
+	    locationMarker.y = -state.current_location_pose.position.y;
+	    locationMarker.scaleX = 1.0 / viewer.scene.scaleX;
+	    locationMarker.scaleY = 1.0 / viewer.scene.scaleY;
+	    // change the angle
+	    locationMarker.rotation = viewer.scene.rosQuaternionToGlobalTheta(state.current_location_pose.orientation);
+	    locationMarker.visible = true;
+	    locationMarker.addEventListener('dblclick', function(event) { alert("clicked on arrow!"); });
+	} else {
+	    // If no location is selected, disable buttons that operate on current location.
+	    document.querySelector("#recordBtn").setAttribute("disabled", true);
+	    document.querySelector("#deleteBtn").setAttribute("disabled", true);
+	    document.querySelector("#navigateBtn").setAttribute("disabled", true);
+	}
+    };
 
-	expListenerSrvCli.callService(new ROSLIB.ServiceRequest({}), function(result) {
-		drawState(result.state);
-	});
+    var processPoseArray = function(poseArray) {
+	if (isPoseInitialized == false) {
+	    isPoseInitialized = true;
+            var initWarningSpan = document.querySelector('div[id="initwarning"]');
+	    initwarning.style.display = "none";
+	}
+        var localizedwarning = document.querySelector('div[id="localizedwarning"]');
+	poses = poseArray.poses;
+	if (poses.length < 600) {
+	    localizedwarning.style.display = "none";
+	} else {
+	    localizedwarning.style.display = "";
+	}
+    }
 
+    expListener.subscribe(function(state) {
+	drawState(state);
+    });
+    
+    estimatedPoseListener.subscribe(function(poseArray) {
+	processPoseArray(poseArray);
+    });
 
-	//
-  }
+    expListenerSrvCli.callService(new ROSLIB.ServiceRequest({}), function(result) {
+	drawState(result.state);
+    });
+}
