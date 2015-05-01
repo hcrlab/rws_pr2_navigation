@@ -12,7 +12,7 @@
         <script src="http://cdn.robotwebtools.org/EventEmitter2/current/eventemitter2.js"></script>
         <script src="http://cdn.robotwebtools.org/roslibjs/current/roslib.js"></script>
         <script src="http://cdn.robotwebtools.org/ros2djs/current/ros2d.js"></script>
-
+	<script>var repositionLocationMode = true;</script>
         <script src="nav.js"></script>
         <script src="index.js"></script>
 
@@ -27,18 +27,34 @@
 		}
 		
 		h1 {
-		        font-size: 18px;
+		  font-size: 18px;
+		  height: 50px;
+		  line-height: 50px;
+		  margin: 0px;
+		  text-align: center;
+		  background-color: #ffc107;
 		}
 
 		ul {
-		        height: 300px;
+		        height: 450px;
 		        list-style: none;
 		        padding: 0px;
 		        margin: 0px;
 		        overflow: scroll;
 		}
 
+		dialog {
+		  width: 800px;
+		  border-radius: 10px;
+		}
+
+		#notifications {
+		  border: 2px solid black;
+		  width: 1050px;
+		}
+	
 		#notifications div {
+		  margin: 8px;
 		  font-size: 18px;
 		  font-weight: bold;
 		  height: 24px;
@@ -52,36 +68,45 @@
 		  vertical-align: middle;
 		}
 
-		#overlay {
-			width: 100%;
-			height: 100%;
-			margin: 0;
-			padding: 0;
-			position: absolute;
-			top: 0;
-			left: 0;
-			background: rgba(60, 60, 60, 0.3);
-			display: flex;
-			justify-content: center;
-			flex-direction: column;
-			align-content: center;
-		}
-
-		#renameBox {
-			max-width: 400px;
-			margin-left: auto;
-			margin-right: auto;
-			background: black;
-		}
-
 		#key {
-		  border-top: solid 5px #333333;
+		  border-top: solid 2px #333333;
 		}
 
 		#key div {
 		  margin-top: 16px;
 		  margin-left: 8px;
 		  margin-bottom: 20px;
+		}
+
+		#controls {
+		  background-color: #ffdd77;
+		}
+
+		#controls img {
+		  margin-left: 40px;
+		  margin-right: 1px;
+		  margin-bottom: 8px;
+		  margin-top: 8px;
+		}
+
+		#controls img:hover {
+		  border: 1px solid gray;
+		  margin-top: 7px;
+		  margin-bottom: 7px;
+		  margin-left: 39px;
+		  margin-right: 0px;
+		}
+
+		#initializePose {
+		  float: right;
+		  color: black;
+		  border: 1px solid black;
+		  padding: 4px;
+		}
+		
+		#initializePose:hover {
+		  border: 1px solid gray;
+		  color: gray;
 		}
 
 		#locationControls {
@@ -92,13 +117,6 @@
 
 		#locationControls, #nav {
 		       float: left;
-		}
-		
-		#locationsTitle {
-		      text-align: center;
-		      height: 50px;
-		      line-height: 50px;
-		      background-color: #ffc107;
 		}
 
 		#locationList li {
@@ -166,6 +184,11 @@
 		        }
 		}
 
+		.blur {
+		  filter: blur(3px);
+		  -webkit-filter: blur(3px);
+		}
+
 		.arrow {
 		  vertical-align: text-bottom;
 		  margin-right: 8px;
@@ -214,13 +237,11 @@
       <div id="localizedwarning">
 	<span>The PR2 is not localized</span>
 	<img src="images/info.png" class="info">
+	<span id="initializePose">Initialize Robot Pose</span>
       </div>
     </div>
-    
-    <br>
-
-    
-     <div id="mode">
+ 
+     <!--<div id="mode">
       <form id="mapcontrols" action="">
         <div>
           <h1>Modes<img src="images/info.png" class="info"></h1>
@@ -230,21 +251,22 @@
         </div>
       </form>
             
-    </div>
+    </div>-->
     <div id="locationAndMap">
       <!-- Locations Panel -->
       <div>
 	<div id="locationControls">
 	  <div id="savedLocations">
-            <div id="locationsTitle">Saved Locations</div>
+            <h1>Saved Locations</h1>
             <ul id="locationList"></ul>
 	  </div>
-	  <button com="delete-current" id="deleteBtn">Delete</button></br>
-	  <button com="navigate-to-current" id="navigateBtn">Navigate to selected</button></br>
-	  <button com="record-location" id="recordBtn">Set to current pose</button></br>
-	  <button com="new-location">Create new</button>
+	  <div id="controls">
+	    <img src="images/delete.png" alt="delete" com="delete-current" id="deleteBtn" width="40px" height="40px"></img>
+	    <img src="images/goal.png" alt="navigate" com="navigate-to-current" id="navigateBtn" width="40px" height="40px"></img>
+	    <img src="images/plus.png" alt="add" com="new-location" width="40px" height="40px"></img>
+	  </div>
           <div id="key">
-	    <div>Key</div>
+	    <h1>Key</h1>
 	    <div class="item"><img class="arrow" src="images/current_robot_pose.jpg">Current Robot Pose</div>
             <div class="item"><img class="arrow" src="images/saved_location.jpg">Currently selected location</div>
             <div class="item"><img class="arrow" src="images/nav_goal.jpg">Navigation goal</div>

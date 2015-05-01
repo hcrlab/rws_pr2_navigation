@@ -104,11 +104,11 @@ function init() {
     processPose = null;
     // By default use map as navigation tool: processPose == NAV2D.Navigator.sendGoal.
     // If other controls are checked, change the function.
-    if (document.querySelector("#setInitRadioBtn").checked) {
+    /*if (document.querySelector("#setInitRadioBtn").checked) {
 	processPose = setInitialPose;
     } else if (document.querySelector("#setLocationRadioBtn").checked) {
 	processPose = setLocation;
-    }
+    }*/
 
     // Setup the nav client.
     var nav = NAV2D.OccupancyGridClientNav({
@@ -121,7 +121,7 @@ function init() {
     });
 
     // Setup the controls for the map.
-    document.querySelector("#setGoalRadioBtn").addEventListener("click", function() {
+    /*document.querySelector("#setGoalRadioBtn").addEventListener("click", function() {
 	NAV2D.Navigator.processPose = NAV2D.Navigator.sendGoal;
     });
     document.querySelector("#setInitRadioBtn").addEventListener("click", function() {
@@ -129,11 +129,11 @@ function init() {
     });
     document.querySelector("#setLocationRadioBtn").addEventListener("click", function() {
 	NAV2D.Navigator.processPose = setLocation;
-    });
+    }); */
 
 
     //hook up buttons with com attribute to navigation commands
-    [].slice.call(document.querySelectorAll("button[com]")).forEach(function(el) {
+    [].slice.call(document.querySelectorAll("img[com]")).forEach(function(el) {
 	el.addEventListener("click", function() {
 	    var relCom = new ROSLIB.Message({
 		command : el.getAttribute("com")
@@ -215,27 +215,38 @@ function init() {
     var plug_modal = document.querySelector("#plugwarningdialog");
     document.querySelector("#plugwarning>img").addEventListener("click", function() {
 	plug_modal.showModal();
+	document.querySelector("body").setAttribute("class", "blur");
     });
     document.querySelector("#plugwarningclose").addEventListener("click", function() {
 	plug_modal.close();
+	document.querySelector("body").removeAttribute("class", "blur");
     });
 
     var init_modal = document.querySelector("#initwarningdialog");
     document.querySelector("#initwarning>img").addEventListener("click", function() {
 	init_modal.showModal();
+	document.querySelector("body").setAttribute("class", "blur");
     });
     document.querySelector("#initwarningclose").addEventListener("click", function() {
 	init_modal.close();
+	document.querySelector("body").removeAttribute("class", "blur");
     });
 
     var localized_modal = document.querySelector("#localizedwarningdialog");
     document.querySelector("#localizedwarning>img").addEventListener("click", function() {
 	localized_modal.showModal();
+	document.querySelector("body").setAttribute("class", "blur");
     });
     document.querySelector("#localizedwarningclose").addEventListener("click", function() {
 	localized_modal.close();
+	document.querySelector("body").removeAttribute("class", "blur");
     });
    
+    // locations
+    var locationEventHandler = function(event, mouseState) {
+	
+    }
+
     var locListCont = document.querySelector("#locationList");
 
     var locationMarker = new ROS2D.NavigationArrow({
@@ -280,7 +291,8 @@ function init() {
 	    // change the angle
 	    locationMarker.rotation = viewer.scene.rosQuaternionToGlobalTheta(state.current_location_pose.orientation);
 	    locationMarker.visible = true;
-	    locationMarker.addEventListener('dblclick', function(event) { alert("clicked on arrow!"); });
+	    locationMarker.draggable = true;
+	    locationMarker.addEventListener('click', function(event) { alert("clicked on arrow!"); });
 	} else {
 	    // If no location is selected, disable buttons that operate on current location.
 	    document.querySelector("#recordBtn").setAttribute("disabled", true);
