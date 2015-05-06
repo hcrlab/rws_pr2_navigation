@@ -277,7 +277,6 @@ function init() {
 	}
 	if (state.current_location != -1) {
 	    // If a location is selected, enable and create buttons for its manipulation.
-	    document.querySelector("#recordBtn").removeAttribute("disabled");
 	    document.querySelector("#deleteBtn").removeAttribute("disabled");
 	    document.querySelector("#navigateBtn").removeAttribute("disabled");
 
