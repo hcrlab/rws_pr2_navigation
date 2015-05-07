@@ -120,6 +120,9 @@ function init() {
       processPose : processPose
     });
 
+    document.querySelector("#initializePose").addEventListener("click", function() {
+	NAV2D.Navigator.processPose = setInitialPose;
+    });
     // Setup the controls for the map.
     /*document.querySelector("#setGoalRadioBtn").addEventListener("click", function() {
 	NAV2D.Navigator.processPose = NAV2D.Navigator.sendGoal;
@@ -163,10 +166,12 @@ function init() {
 	}
     }
     
+    var current_location; // the current location selected
     function handleLocationClick(self, loc_n) {
 	clicks++;
 	if (clicks === 1) {
 	    timer = setTimeout(function() {
+		current_location = self.innerHTML;
 		navPub.publish(new ROSLIB.Message({
 		    command: "switch-to-location",
 		    param: loc_n
@@ -175,16 +180,22 @@ function init() {
 	    }, 500);
 	} else {
 	    clearTimeout(timer);    //prevent single-click action
+	    // Don't allow user to rename if location is not the one currently selected
+	    if (current_location !== self.innerHTML) {
+		return;
+	    }
 	    rename(self);  //perform double-click action
 	    clicks = 0;
 	}
     }    
 
+    var removed = false;
     function rename(self) {
 	var editableText = document.createElement("textarea");
 	editableText.value = self.innerHTML;
 	self.parentNode.replaceChild(editableText, self);
 	editableText.focus();
+	removed = false;
 	editableText.addEventListener("keyup", function() { renameEnter(editableText) });
 	editableText.addEventListener("blur", function() { renameBlurred(editableText) });
     }
@@ -195,7 +206,10 @@ function init() {
 	}
     }
 
+
     function renameBlurred(self) {
+	if (removed) return; // because removing a node fires this again
+	removed = true;
 	var new_name = self.value;
 	var dv = document.createElement("div");
 	dv.innerHTML = new_name;
@@ -280,8 +294,9 @@ function init() {
 	    document.querySelector("#deleteBtn").removeAttribute("disabled");
 	    document.querySelector("#navigateBtn").removeAttribute("disabled");
 
-	    locListCont.querySelectorAll("div")[state.current_location].className = "selected";
-
+	    var current_dv = locListCont.querySelectorAll("div")[state.current_location];
+	    current_dv.className = "selected";
+	    current_location = current_dv.innerHTML;
 	    // update the location on the map
 	    locationMarker.x = state.current_location_pose.position.x;
 	    locationMarker.y = -state.current_location_pose.position.y;
