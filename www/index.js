@@ -46,6 +46,8 @@ var initialPosePub = new ROSLIB.Topic({
 // for detecting single vs double clicks on saved locations
 var clicks = 0;
 
+var initializeMode = false;
+
 /**
    * Send the initial pose of the robot to the navigation stack with the given pose.
    *
@@ -101,7 +103,7 @@ function init() {
       height : 800
     });
 
-    processPose = null;
+    processPose = NAV2D.Navigator.sendGoal;
     // By default use map as navigation tool: processPose == NAV2D.Navigator.sendGoal.
     // If other controls are checked, change the function.
     /*if (document.querySelector("#setInitRadioBtn").checked) {
@@ -121,7 +123,16 @@ function init() {
     });
 
     document.querySelector("#initializePose").addEventListener("click", function() {
-	NAV2D.Navigator.processPose = setInitialPose;
+	alert(initializeMode);
+	if (!initializeMode) {
+	    initializeMode = true;
+	    this.style.color = "red";
+	    NAV2D.Navigator.processPose = setInitialPose;
+	} else {
+	    initializeMode = false;
+	    this.style.color = "green";
+	    NAV2D.Navigator.processPose = NAV2D.Navigator.sendGoal;
+	}
     });
     // Setup the controls for the map.
     /*document.querySelector("#setGoalRadioBtn").addEventListener("click", function() {
@@ -256,14 +267,99 @@ function init() {
 	document.querySelector("body").removeAttribute("class", "blur");
     });
    
-    // locations
+
+    var position = null;
+    var locationMarker = null;
+    var mouseDown = false;
+    var xDelta = 0;
+    var yDelta = 0;
+    var rotateLocationMarker = false;
+    // click and drag oh yah!
     var locationEventHandler = function(event, mouseState) {
-	
+	var stage = viewer.scene;
+	// TODO: fix this broken-ness
+	if (mouseState === 'dblclick') {
+	    rotateLocationMarker = !rotateLocationMarker;	
+	    var color;
+	    if (rotateLocationMarker) {
+		color = createjs.Graphics.getRGB(128, 0, 0, 0.66);
+	    } else {
+		color = createjs.Graphics.getRGB(128, 128, 0, 0.66);
+	    }
+	    var x = locationMarker.x;
+	    var y = locationMarker.y;
+	    var rotation = locationMarker.rotation;
+	    stage.removeChild(locationMarker);
+	    locationMarker = new ROS2D.NavigationArrow({
+		size : 20,
+		strokeSize : 1,
+		fillColor : color,
+		pulse : false
+	    });
+	    locationMarker.x = x;
+	    locationMarker.y = y;
+	    locationMarker.rotation = rotation;
+	    locationMarker.scaleX = 1.0 / stage.scaleX;
+	    locationMarker.scaleY = 1.0 / stage.scaleY;
+	    locationMarker.addEventListener('dblclick', function(event) { locationEventHandler(event, 'dblclick'); });
+	    locationMarker.addEventListener('mousedown', function(event) { locationEventHandler(event, 'down'); });
+	    locationMarker.addEventListener('pressmove', function(event) { locationEventHandler(event, 'move'); });
+	    locationMarker.addEventListener('pressup', function(event) { locationEventHandler(event, 'up'); });
+	    stage.addChild(locationMarker);
+	    return;
+	} 
+	position = stage.globalToRos(event.stageX, event.stageY);
+        positionVec3 = new ROSLIB.Vector3(position);
+	if (mouseState === 'down') {
+	    // really nothing to do here - maybe change opacity?
+	} else if (mouseState === 'move') {
+	    if (!rotateLocationMarker) {
+		var rotation = locationMarker.rotation;
+		stage.removeChild(locationMarker);
+		locationMarker = new ROS2D.NavigationArrow({
+		    size : 20,
+		    strokeSize : 1,
+		    fillColor : createjs.Graphics.getRGB(128, 128, 0, 0.66),
+		    pulse : false
+		});
+		locationMarker.x =  positionVec3.x;
+		locationMarker.y = -positionVec3.y;
+		locationMarker.rotation = rotation;
+		locationMarker.scaleX = 1.0 / stage.scaleX;
+		locationMarker.scaleY = 1.0 / stage.scaleY;
+		stage.addChild(locationMarker);
+	    } else {
+		console.log("should rotate");
+	    }
+	} else { // press up
+	    locationMarker.addEventListener('dblclick', function(event) { locationEventHandler(event, 'dblclick'); });
+	    locationMarker.addEventListener('mousedown', function(event) { locationEventHandler(event, 'down'); });
+	    locationMarker.addEventListener('pressmove', function(event) { locationEventHandler(event, 'move'); });
+	    locationMarker.addEventListener('pressup', function(event) { locationEventHandler(event, 'up'); });
+	    
+	    var thetaRadians = locationMarker.rotation * Math.PI / 180.0;
+	    var qz =  Math.sin(-thetaRadians/2.0);
+	    var qw =  Math.cos(-thetaRadians/2.0);
+	    
+	    // TODO: fix this shit!
+	    /*
+	      var orientation = new ROSLIB.Quaternion({x:0, y:0, z:qz, w:qw});
+
+	      var pose = new ROSLIB.Pose({
+	      position :    positionVec3,
+	      orientation : orientation
+	      });
+	      var p = NAV2D.Navigator.processPose;
+	      NAV2D.Navigator.processPose = setLocation;
+	      NAV2D.Navigator.processPose(pose);
+	      NAV2D.Navigator.processPose = p;
+	    */
+	}
     }
 
     var locListCont = document.querySelector("#locationList");
 
-    var locationMarker = new ROS2D.NavigationArrow({
+    locationMarker = new ROS2D.NavigationArrow({
         size : 20,
         strokeSize : 1,
         fillColor : createjs.Graphics.getRGB(128, 128, 0, 0.66),
@@ -305,8 +401,11 @@ function init() {
 	    // change the angle
 	    locationMarker.rotation = viewer.scene.rosQuaternionToGlobalTheta(state.current_location_pose.orientation);
 	    locationMarker.visible = true;
-	    locationMarker.draggable = true;
-	    locationMarker.addEventListener('click', function(event) { alert("clicked on arrow!"); });
+	    // event handlers
+	    locationMarker.addEventListener('dblclick', function(event) { locationEventHandler(event, 'dblclick'); });
+	    locationMarker.addEventListener('mousedown', function(event) { locationEventHandler(event, 'down'); });
+	    locationMarker.addEventListener('pressmove', function(event) { locationEventHandler(event, 'move'); });
+	    locationMarker.addEventListener('pressup', function(event) { locationEventHandler(event, 'up'); });
 	} else {
 	    // If no location is selected, disable buttons that operate on current location.
 	    document.querySelector("#deleteBtn").setAttribute("disabled", true);
