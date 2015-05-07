@@ -309,7 +309,6 @@ function init() {
 	    locationMarker.addEventListener('click', function(event) { alert("clicked on arrow!"); });
 	} else {
 	    // If no location is selected, disable buttons that operate on current location.
-	    document.querySelector("#recordBtn").setAttribute("disabled", true);
 	    document.querySelector("#deleteBtn").setAttribute("disabled", true);
 	    document.querySelector("#navigateBtn").setAttribute("disabled", true);
 	}
