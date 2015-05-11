@@ -207,11 +207,13 @@ class Session:
 
     @staticmethod
     def get_saved_locations():
-        locations = map(Session.load,
-                        filter(lambda f: f.endswith(Session.file_extension),
-                               filter(isfile,
-                                      map(partial(join, Session.data_directory),
-                                          listdir(Session.data_directory)))))
+        if not os.path.exists(Session.data_directory):
+            return []
+        locations = []
+        for f in listdir(Session.data_directory):
+            file_path = join(Session.data_directory, f)
+            if isfile(file_path) and file_path.endswith(Session.file_extension):
+                locations.append(Session.load(file_path))
         locations.sort(key=lambda location: location.id)
         return locations
 
