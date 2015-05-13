@@ -21,13 +21,18 @@ class Robot:
 
     def __init__(self):
         self.tf_listener = TransformListener()
-
         self.nav_action_client = SimpleActionClient('move_base', MoveBaseAction)
-        self.nav_action_client.wait_for_server()
-        rospy.loginfo('Got response from move base action server.')
+        moveBaseResponse = self.nav_action_client.wait_for_server(rospy.Duration.from_sec(5.0))
+        if moveBaseResponse:
+            rospy.loginfo('Got response from move base action server.')
+        else:
+            rospy.logwarn('Did not get response from move base action server.')
         self.tuck_arms_client = SimpleActionClient('tuck_arms', TuckArmsAction)
-        self.tuck_arms_client.wait_for_server()
-        rospy.loginfo('Got response from tuck arms action server.')
+        tuckArmsResponse = self.tuck_arms_client.wait_for_server(rospy.Duration.from_sec(5.0))
+        if tuckArmsResponse:
+            rospy.loginfo('Got response from tuck arms action server.')
+        else:
+            rospy.logwarn('Did not get repsonse from tuck arms action server.')
 
     @staticmethod
     def get_robot():

@@ -24,7 +24,7 @@ on the robot, run
 
 and
 
-*roslaunch rosbridge_server rosbridge_websocket.launch*
+*roslaunch rws_pr2_navigation websocket.launch*
 
 and 
 
