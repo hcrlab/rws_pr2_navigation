@@ -290,7 +290,7 @@ function init() {
 	    var y = locationMarker.y;
 	    var rotation = locationMarker.rotation;
 	    stage.removeChild(locationMarker);
-	    locationMarker = new ROS2D.NavigationArrow({
+	    locationMarker = new ROS2D.NavigationArrow2({
 		size : 20,
 		strokeSize : 1,
 		fillColor : color,
@@ -316,7 +316,7 @@ function init() {
 	    if (!rotateLocationMarker) {
 		var rotation = locationMarker.rotation;
 		stage.removeChild(locationMarker);
-		locationMarker = new ROS2D.NavigationArrow({
+		locationMarker = new ROS2D.NavigationArrow2({
 		    size : 20,
 		    strokeSize : 1,
 		    fillColor : createjs.Graphics.getRGB(128, 128, 0, 0.66),
@@ -359,7 +359,7 @@ function init() {
 
     var locListCont = document.querySelector("#locationList");
 
-    locationMarker = new ROS2D.NavigationArrow({
+    locationMarker = new ROS2D.NavigationArrow2({
         size : 20,
         strokeSize : 1,
         fillColor : createjs.Graphics.getRGB(128, 128, 0, 0.66),
