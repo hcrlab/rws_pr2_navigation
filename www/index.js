@@ -104,13 +104,6 @@ function init() {
     });
 
     processPose = NAV2D.Navigator.sendGoal;
-    // By default use map as navigation tool: processPose == NAV2D.Navigator.sendGoal.
-    // If other controls are checked, change the function.
-    /*if (document.querySelector("#setInitRadioBtn").checked) {
-	processPose = setInitialPose;
-    } else if (document.querySelector("#setLocationRadioBtn").checked) {
-	processPose = setLocation;
-    }*/
 
     // Setup the nav client.
     var nav = NAV2D.OccupancyGridClientNav({
@@ -134,17 +127,6 @@ function init() {
 	    NAV2D.Navigator.processPose = NAV2D.Navigator.sendGoal;
 	}
     });
-    // Setup the controls for the map.
-    /*document.querySelector("#setGoalRadioBtn").addEventListener("click", function() {
-	NAV2D.Navigator.processPose = NAV2D.Navigator.sendGoal;
-    });
-    document.querySelector("#setInitRadioBtn").addEventListener("click", function() {
-	NAV2D.Navigator.processPose = setInitialPose;
-    });
-    document.querySelector("#setLocationRadioBtn").addEventListener("click", function() {
-	NAV2D.Navigator.processPose = setLocation;
-    }); */
-
 
     //hook up buttons with com attribute to navigation commands
     [].slice.call(document.querySelectorAll("img[com]")).forEach(function(el) {
@@ -217,7 +199,6 @@ function init() {
 	}
     }
 
-
     function renameBlurred(self) {
 	if (removed) return; // because removing a node fires this again
 	removed = true;
@@ -268,105 +249,129 @@ function init() {
     });
    
 
+    // ARROW VARIABLES
+    var rotationRingColor = createjs.Graphics.getRGB(0, 128, 255, 1.0);
+    var rotationRingHoverColor = createjs.Graphics.getRGB(0, 128, 255, 0.7);
+    var locationArrowColor = createjs.Graphics.getRGB(66, 200, 128, 1.0);
+    var locationArrowHoverColor = createjs.Graphics.getRGB(66, 200, 128, 0.7);
+
+    function createBasicArrow(stage, position, rotation) {
+	var marker = new ROS2D.NavigationArrow2({
+	    size : 20,
+	    strokeSize : 1,
+	    fillColor : locationArrowColor,
+	    ringColor : rotationRingColor,
+	});
+	marker.x =  position.x;
+	marker.y =  position.y;
+	marker.rotation = rotation;
+	marker.scaleX = 1.0 / stage.scaleX;
+	marker.scaleY = 1.0 / stage.scaleY;
+	return marker;
+    }
+
+    function setLocationMarkerCallbacks(marker) {
+	locationArrow = marker.getArrow();
+	locationArrow.addEventListener('mouseover', function(event) {
+	    locationMarker.setArrowColor(locationArrowHoverColor);
+	});
+	locationArrow.addEventListener('mouseout', function(event) {
+	    locationMarker.setArrowColor(locationArrowColor);
+	});
+	locationArrow.addEventListener();
+        locationArrow.addEventListener('mousedown', function(event) { locationEventHandler(event, 'down'); });
+        locationArrow.addEventListener('pressmove', function(event) { locationEventHandler(event, 'move'); });
+        locationArrow.addEventListener('pressup', function(event) { locationEventHandler(event, 'up'); });
+	rotationRing = marker.getRotationRing();
+	rotationRing.addEventListener('mouseover', function(event) { 
+	    locationMarker.setRotationColor(rotationRingHoverColor); 
+	});
+	rotationRing.addEventListener('mouseout', function(event) { 
+	    locationMarker.setRotationColor(rotationRingColor); 
+	});
+	rotationRing.addEventListener('mousedown', function(event) { rotationEventHandler(event, 'down'); });
+	rotationRing.addEventListener('pressmove', function(event) { rotationEventHandler(event, 'move'); });
+	rotationRing.addEventListener('pressup', function(event) { rotationEventHandler(event, 'up'); });
+    }
+
+    function storeCurrentLocation(position, thetaRadians) {
+        var qz =  Math.sin(-thetaRadians/2.0);
+        var qw =  Math.cos(-thetaRadians/2.0);
+
+        var orientation = new ROSLIB.Quaternion({x:0, y:0, z:qz, w:qw});
+
+        var pose = new ROSLIB.Pose({
+            position :    position,
+            orientation : orientation
+        });
+	setLocation(pose);
+    }
+
     var position = null;
     var locationMarker = null;
-    var mouseDown = false;
-    var xDelta = 0;
-    var yDelta = 0;
-    var rotateLocationMarker = false;
-    // click and drag oh yah!
+    var rotating = false;
+    // CLICK AND DRAG
     var locationEventHandler = function(event, mouseState) {
 	var stage = viewer.scene;
-	// TODO: fix this broken-ness
-	if (mouseState === 'dblclick') {
-	    rotateLocationMarker = !rotateLocationMarker;	
-	    var color;
-	    if (rotateLocationMarker) {
-		color = createjs.Graphics.getRGB(128, 0, 0, 0.66);
-	    } else {
-		color = createjs.Graphics.getRGB(128, 128, 0, 0.66);
-	    }
-	    var x = locationMarker.x;
-	    var y = locationMarker.y;
-	    var rotation = locationMarker.rotation;
-	    stage.removeChild(locationMarker);
-	    locationMarker = new ROS2D.NavigationArrow2({
-		size : 20,
-		strokeSize : 1,
-		fillColor : color,
-		pulse : false
-	    });
-	    locationMarker.x = x;
-	    locationMarker.y = y;
-	    locationMarker.rotation = rotation;
-	    locationMarker.scaleX = 1.0 / stage.scaleX;
-	    locationMarker.scaleY = 1.0 / stage.scaleY;
-	    locationMarker.addEventListener('dblclick', function(event) { locationEventHandler(event, 'dblclick'); });
-	    locationMarker.addEventListener('mousedown', function(event) { locationEventHandler(event, 'down'); });
-	    locationMarker.addEventListener('pressmove', function(event) { locationEventHandler(event, 'move'); });
-	    locationMarker.addEventListener('pressup', function(event) { locationEventHandler(event, 'up'); });
-	    stage.addChild(locationMarker);
-	    return;
-	} 
 	position = stage.globalToRos(event.stageX, event.stageY);
         positionVec3 = new ROSLIB.Vector3(position);
 	if (mouseState === 'down') {
-	    // really nothing to do here - maybe change opacity?
+	    // nothing to do here
 	} else if (mouseState === 'move') {
-	    if (!rotateLocationMarker) {
-		var rotation = locationMarker.rotation;
-		stage.removeChild(locationMarker);
-		locationMarker = new ROS2D.NavigationArrow2({
-		    size : 20,
-		    strokeSize : 1,
-		    fillColor : createjs.Graphics.getRGB(128, 128, 0, 0.66),
-		    pulse : false
-		});
-		locationMarker.x =  positionVec3.x;
-		locationMarker.y = -positionVec3.y;
-		locationMarker.rotation = rotation;
-		locationMarker.scaleX = 1.0 / stage.scaleX;
-		locationMarker.scaleY = 1.0 / stage.scaleY;
-		stage.addChild(locationMarker);
-	    } else {
-		console.log("should rotate");
-	    }
+	    var rotation = locationMarker.rotation;
+	    stage.removeChild(locationMarker);
+	    positionVec3.y *= -1;
+	    locationMarker = createBasicArrow(stage, positionVec3, rotation);
+	    // don't need to set callbacks because user is dragging
+	    stage.addChild(locationMarker);
 	} else { // press up
-	    locationMarker.addEventListener('dblclick', function(event) { locationEventHandler(event, 'dblclick'); });
-	    locationMarker.addEventListener('mousedown', function(event) { locationEventHandler(event, 'down'); });
-	    locationMarker.addEventListener('pressmove', function(event) { locationEventHandler(event, 'move'); });
-	    locationMarker.addEventListener('pressup', function(event) { locationEventHandler(event, 'up'); });
-	    
-	    var thetaRadians = locationMarker.rotation * Math.PI / 180.0;
-	    var qz =  Math.sin(-thetaRadians/2.0);
-	    var qw =  Math.cos(-thetaRadians/2.0);
-	    
-	    // TODO: fix this shit!
-	    /*
-	      var orientation = new ROSLIB.Quaternion({x:0, y:0, z:qz, w:qw});
-
-	      var pose = new ROSLIB.Pose({
-	      position :    positionVec3,
-	      orientation : orientation
-	      });
-	      var p = NAV2D.Navigator.processPose;
-	      NAV2D.Navigator.processPose = setLocation;
-	      NAV2D.Navigator.processPose(pose);
-	      NAV2D.Navigator.processPose = p;
-	    */
+	    setLocationMarkerCallbacks(locationMarker);
+	    // store location
+	    storeCurrentLocation(positionVec3, locationMarker.rotation * (Math.PI / 180.0));
 	}
     }
 
-    var locListCont = document.querySelector("#locationList");
+    // CLICK AND ROTATE
+    var xDelta = 0;
+    var yDelta = 0;
+    var positionVec3 = null; // reference point for mouse movement
+    var markerPositionVec3 = null; // center of rotation
+    var thetaRadians = 0;
+    var thetaDegrees = 0;
+    var rotationEventHandler = function(event, mouseState) {
+	var stage = viewer.scene;
+	if (mouseState === 'down') {
+	    var position = stage.globalToRos(event.stageX, event.stageY);
+            positionVec3 = new ROSLIB.Vector3(position);
+	    markerPositionVec3 = new ROSLIB.Vector3({ x: locationMarker.x, y: locationMarker.y });
+	    rotating = true;
+	} else if (mouseState === 'move') {
+	    stage.removeChild(locationMarker);
+            var currentPos = stage.globalToRos(event.stageX, event.stageY);
+	    var currentPosVec3 = new ROSLIB.Vector3(currentPos);
+            var xDelta = currentPosVec3.x - positionVec3.x;
+            var yDelta = currentPosVec3.y - positionVec3.y;
+            thetaRadians  = Math.atan2(xDelta,yDelta);
+            thetaDegrees = thetaRadians * (180.0 / Math.PI);
+            if (thetaDegrees >= 0 && thetaDegrees <= 180) {
+		thetaDegrees += 270;
+            } else {
+		thetaDegrees -= 90;
+            }
+            locationMarker = createBasicArrow(stage, markerPositionVec3, thetaDegrees);
+	    // we don't need to set callbacks here because the user is dragging
+            stage.addChild(locationMarker);
+	} else { // press up
+	    rotating = false;
+	    setLocationMarkerCallbacks(locationMarker);
+	    // TODO: FIX THIS OMG
+	    storeCurrentLocation(markerPositionVec3, locationMarker.rotation * (Math.PI / 180.0));
+	}
+    }
 
-    locationMarker = new ROS2D.NavigationArrow2({
-        size : 20,
-        strokeSize : 1,
-        fillColor : createjs.Graphics.getRGB(128, 128, 0, 0.66),
-        pulse : false
-    });
-    locationMarker.visible = false;
-    viewer.scene.addChild(locationMarker);
+    // Initial Location on startup
+    var locListCont = document.querySelector("#locationList");
+    viewer.scene.enableMouseOver();
     // Code for drawing the list of locations.
     var drawState = function(state) {
 	//draw location list
@@ -381,6 +386,7 @@ function init() {
 	    li.appendChild(dv);
 	    locListCont.appendChild(li);
 	});
+	viewer.scene.removeChild(locationMarker);
 	// If there were no saved locations, say so:
 	if (state.location_names.length == 0) {
 	    locListCont.innerHTML = "(none)"
@@ -389,23 +395,17 @@ function init() {
 	    // If a location is selected, enable and create buttons for its manipulation.
 	    document.querySelector("#deleteBtn").removeAttribute("disabled");
 	    document.querySelector("#navigateBtn").removeAttribute("disabled");
-
 	    var current_dv = locListCont.querySelectorAll("div")[state.current_location];
 	    current_dv.className = "selected";
 	    current_location = current_dv.innerHTML;
-	    // update the location on the map
-	    locationMarker.x = state.current_location_pose.position.x;
-	    locationMarker.y = -state.current_location_pose.position.y;
-	    locationMarker.scaleX = 1.0 / viewer.scene.scaleX;
-	    locationMarker.scaleY = 1.0 / viewer.scene.scaleY;
-	    // change the angle
-	    locationMarker.rotation = viewer.scene.rosQuaternionToGlobalTheta(state.current_location_pose.orientation);
-	    locationMarker.visible = true;
-	    // event handlers
-	    locationMarker.addEventListener('dblclick', function(event) { locationEventHandler(event, 'dblclick'); });
-	    locationMarker.addEventListener('mousedown', function(event) { locationEventHandler(event, 'down'); });
-	    locationMarker.addEventListener('pressmove', function(event) { locationEventHandler(event, 'move'); });
-	    locationMarker.addEventListener('pressup', function(event) { locationEventHandler(event, 'up'); });
+	    // add arrow to map
+	    var position = new ROSLIB.Vector3({
+		x: state.current_location_pose.position.x, 
+		y: -state.current_location_pose.position.y });
+	    var rotation = viewer.scene.rosQuaternionToGlobalTheta(state.current_location_pose.orientation);
+	    locationMarker = createBasicArrow(viewer.scene, position, rotation);
+	    setLocationMarkerCallbacks(locationMarker);
+	    viewer.scene.addChild(locationMarker);
 	} else {
 	    // If no location is selected, disable buttons that operate on current location.
 	    document.querySelector("#deleteBtn").setAttribute("disabled", true);
