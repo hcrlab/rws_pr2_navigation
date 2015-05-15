@@ -294,14 +294,14 @@ function init() {
 	rotationRing.addEventListener('pressup', function(event) { rotationEventHandler(event, 'up'); });
     }
 
-    function storeCurrentLocation(position, thetaRadians) {
-        var qz =  Math.sin(-thetaRadians/2.0);
+    function storeCurrentLocation(currentPosition, thetaRadians) {
+	var qz =  Math.sin(-thetaRadians/2.0);
         var qw =  Math.cos(-thetaRadians/2.0);
 
         var orientation = new ROSLIB.Quaternion({x:0, y:0, z:qz, w:qw});
 
         var pose = new ROSLIB.Pose({
-            position :    position,
+            position :    currentPosition,
             orientation : orientation
         });
 	setLocation(pose);
@@ -364,7 +364,7 @@ function init() {
 	} else { // press up
 	    rotating = false;
 	    setLocationMarkerCallbacks(locationMarker);
-	    // TODO: FIX THIS OMG
+	    markerPositionVec3.y *= -1;
 	    storeCurrentLocation(markerPositionVec3, locationMarker.rotation * (Math.PI / 180.0));
 	}
     }
