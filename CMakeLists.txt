@@ -57,6 +57,7 @@ add_service_files(
   FILES
   GetNavSystemState.srv
   GetSavedLocations.srv
+  ExecuteLocationStep.srv
 )
 
 ## Generate actions in the 'action' folder
