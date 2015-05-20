@@ -376,8 +376,10 @@ function init() {
     var drawState = function(state) {
 	//draw location list
 	locListCont.innerHTML = "";
-	state.location_names.forEach(function(loc_n) {
+	state.locations.forEach(function(location) {
 	    var dv = document.createElement("div");
+	    console.log(location);
+	    var loc_n = location.name;
 	    dv.innerHTML = loc_n;
 	    dv.addEventListener("click", function() {
 		handleLocationClick(this, loc_n);
@@ -388,21 +390,22 @@ function init() {
 	});
 	viewer.scene.removeChild(locationMarker);
 	// If there were no saved locations, say so:
-	if (state.location_names.length == 0) {
+	if (state.locations.length == 0) {
 	    locListCont.innerHTML = "(none)"
 	}
-	if (state.current_location != -1) {
+	if (state.current_location_index != -1) {
 	    // If a location is selected, enable and create buttons for its manipulation.
 	    document.querySelector("#deleteBtn").removeAttribute("disabled");
 	    document.querySelector("#navigateBtn").removeAttribute("disabled");
-	    var current_dv = locListCont.querySelectorAll("div")[state.current_location];
+	    var current_dv = locListCont.querySelectorAll("div")[state.current_location_index];
 	    current_dv.className = "selected";
 	    current_location = current_dv.innerHTML;
 	    // add arrow to map
+	    var current_pose = state.locations[state.current_location_index].pose;
 	    var position = new ROSLIB.Vector3({
-		x: state.current_location_pose.position.x, 
-		y: -state.current_location_pose.position.y });
-	    var rotation = viewer.scene.rosQuaternionToGlobalTheta(state.current_location_pose.orientation);
+		x: current_pose.position.x, 
+		y: -current_pose.position.y });
+	    var rotation = viewer.scene.rosQuaternionToGlobalTheta(current_pose.orientation);
 	    locationMarker = createBasicArrow(viewer.scene, position, rotation);
 	    setLocationMarkerCallbacks(locationMarker);
 	    viewer.scene.addChild(locationMarker);

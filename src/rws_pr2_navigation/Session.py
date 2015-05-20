@@ -60,10 +60,8 @@ class Session:
     def _get_nav_system_state(self):
         """ Creates a message with the latest state"""
         return NavSystemState(
-            map(lambda act: act.name, self.locations),
-            map(lambda act: act.id, self.locations),
-            -1 if self.current_location_index is None else self.current_location_index,
-            Pose() if self.current_location_index is None else self.get_current_location().pose)
+            self.locations,
+            -1 if self.current_location_index is None else self.current_location_index)
 
     def create_new_location(self):
         """ Creates new location """
