@@ -1,5 +1,7 @@
 /**
  * @author Russell Toris - rctoris@wpi.edu
+ * 
+ * modified by Sonja Khan - sonjak3@cs.washington.edu
  */
 
 /**

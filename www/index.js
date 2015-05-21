@@ -83,6 +83,13 @@ function setLocation(pose) {
     }));
 }
 
+// TODO: figure this shit out
+function initializeRobotPose(pose) {
+    navPub.publish(new ROSLIB.Message({
+	//command:
+    }));
+}
+
 function init() {
     ros.on("error", function() {
         alert("Error connecting to the ROS server. App will not work.")
@@ -249,6 +256,22 @@ function init() {
     });
    
 
+    // TODO: factor
+    function createDot(stage, position, name) {
+	var dotGraphics = new createjs.Graphics();
+	dotGraphics.beginFill("red");
+	dotGraphics.drawCircle(0,0,5);
+	dotGraphics.endFill();
+	var dotShape = new createjs.Shape(dotGraphics).set({name:"dot"});
+	dotShape.x = position.x;
+	dotShape.y = position.y;
+	dotShape.scaleX = 1.0 / stage.scaleX;
+	dotShape.scaleY = 1.0 / stage.scaleY;
+	dotShape.name = name;
+	dotShape.addEventListener('click', function(event) { dotOnClick(event, name); });
+	return dotShape;
+    }
+
     // ARROW VARIABLES
     var rotationRingColor = createjs.Graphics.getRGB(0, 128, 255, 1.0);
     var rotationRingHoverColor = createjs.Graphics.getRGB(0, 128, 255, 0.7);
@@ -305,6 +328,13 @@ function init() {
             orientation : orientation
         });
 	setLocation(pose);
+    }
+
+    function dotOnClick(event, name) {
+	navPub.publish(new ROSLIB.Message({
+	    command: "switch-to-location",
+	    param: name
+	}));
     }
 
     var position = null;
@@ -371,14 +401,18 @@ function init() {
 
     // Initial Location on startup
     var locListCont = document.querySelector("#locationList");
+    var dotMarkers = [];
     viewer.scene.enableMouseOver();
     // Code for drawing the list of locations.
     var drawState = function(state) {
 	//draw location list
 	locListCont.innerHTML = "";
-	state.locations.forEach(function(location) {
+	dotMarkers.forEach(function(dotMarker) {
+	    viewer.scene.removeChild(dotMarker);
+	});
+	dotMarkers = [];
+	state.locations.forEach(function(location) { 
 	    var dv = document.createElement("div");
-	    console.log(location);
 	    var loc_n = location.name;
 	    dv.innerHTML = loc_n;
 	    dv.addEventListener("click", function() {
@@ -387,6 +421,13 @@ function init() {
 	    var li = document.createElement("li");
 	    li.appendChild(dv);
 	    locListCont.appendChild(li);
+	    // draw the dots
+	    var position = new ROSLIB.Vector3({
+		x: location.pose.position.x,
+		y: -location.pose.position.y });
+	    var marker = createDot(viewer.scene, position, loc_n);
+	    dotMarkers.push(marker);
+	    viewer.scene.addChild(marker);
 	});
 	viewer.scene.removeChild(locationMarker);
 	// If there were no saved locations, say so:
@@ -400,6 +441,8 @@ function init() {
 	    var current_dv = locListCont.querySelectorAll("div")[state.current_location_index];
 	    current_dv.className = "selected";
 	    current_location = current_dv.innerHTML;
+	    // hide the dot if that location is selected
+	    dotMarkers[state.current_location_index].visible = false;
 	    // add arrow to map
 	    var current_pose = state.locations[state.current_location_index].pose;
 	    var position = new ROSLIB.Vector3({
