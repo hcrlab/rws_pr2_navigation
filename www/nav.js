@@ -205,9 +205,6 @@ NAV2D.Navigator = function(options) {
     var yDelta = 0;
 
     var mouseEventHandler = function(event, mouseState) {
-	if (repositionLocationMode) {
-	    return;
-	}
       if (mouseState === 'down'){
         // get position when mouse button is pressed down
         position = stage.globalToRos(event.stageX, event.stageY);
@@ -294,7 +291,7 @@ NAV2D.Navigator = function(options) {
       }
     };
 
-    this.rootObject.addEventListener('stagemousedown', function(event) {
+    this.rootObject.addEventListener('mousedown', function(event) {
       mouseEventHandler(event,'down');
     });
 

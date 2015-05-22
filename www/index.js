@@ -268,7 +268,8 @@ function init() {
 	dotShape.scaleX = 1.0 / stage.scaleX;
 	dotShape.scaleY = 1.0 / stage.scaleY;
 	dotShape.name = name;
-	dotShape.addEventListener('click', function(event) { dotOnClick(event, name); });
+	dotShape.addEventListener('mousedown', function(event) { dotOnClick(event, name, 'down'); });
+	dotShape.addEventListener('pressup', function(event) { dotOnClick(event, name, 'up'); });
 	return dotShape;
     }
 
@@ -330,11 +331,18 @@ function init() {
 	setLocation(pose);
     }
 
-    function dotOnClick(event, name) {
-	navPub.publish(new ROSLIB.Message({
-	    command: "switch-to-location",
-	    param: name
-	}));
+    var dotDown = false;
+    function dotOnClick(event, name, mouseState) {
+	event.stopPropagation();
+	if (mouseState === 'down') {
+	    dotDown = true;
+	} else if (dotDown) {
+	    dotDown = false;
+	    navPub.publish(new ROSLIB.Message({
+		command: "switch-to-location",
+		param: name
+	    }));
+	}
     }
 
     var position = null;
@@ -342,6 +350,7 @@ function init() {
     var rotating = false;
     // CLICK AND DRAG
     var locationEventHandler = function(event, mouseState) {
+	event.stopPropagation();
 	var stage = viewer.scene;
 	position = stage.globalToRos(event.stageX, event.stageY);
         positionVec3 = new ROSLIB.Vector3(position);
@@ -369,6 +378,7 @@ function init() {
     var thetaRadians = 0;
     var thetaDegrees = 0;
     var rotationEventHandler = function(event, mouseState) {
+	event.stopPropagation();
 	var stage = viewer.scene;
 	if (mouseState === 'down') {
 	    var position = stage.globalToRos(event.stageX, event.stageY);
