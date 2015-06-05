@@ -46,6 +46,7 @@ var initialPosePub = new ROSLIB.Topic({
 // for detecting single vs double clicks on saved locations
 var clicks = 0;
 
+// true if Initialize Robot Pose button is pressed
 var initializeMode = false;
 
 /**
@@ -83,13 +84,6 @@ function setLocation(pose) {
     }));
 }
 
-// TODO: figure this shit out
-function initializeRobotPose(pose) {
-    navPub.publish(new ROSLIB.Message({
-	//command:
-    }));
-}
-
 function init() {
     ros.on("error", function() {
         alert("Error connecting to the ROS server. App will not work.")
@@ -109,8 +103,7 @@ function init() {
       width : 750,
       height : 800
     });
-
-    processPose = NAV2D.Navigator.sendGoal;
+    processPose = NAV2D.Navigator.setInitialPose;
 
     // Setup the nav client.
     var nav = NAV2D.OccupancyGridClientNav({
@@ -123,14 +116,15 @@ function init() {
     });
 
     document.querySelector("#initializePose").addEventListener("click", function() {
-	alert(initializeMode);
 	if (!initializeMode) {
 	    initializeMode = true;
-	    this.style.color = "red";
+	    document.querySelector("#locationControls").className = "blur";
+	    this.className = "depressed";
 	    NAV2D.Navigator.processPose = setInitialPose;
 	} else {
 	    initializeMode = false;
-	    this.style.color = "green";
+	    document.querySelector("#locationControls").className = "";
+	    this.className = "";
 	    NAV2D.Navigator.processPose = NAV2D.Navigator.sendGoal;
 	}
     });
