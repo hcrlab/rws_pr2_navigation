@@ -136,6 +136,9 @@ function init() {
 		command : el.getAttribute("com")
 	    });
 	    navPub.publish(relCom);
+	    if (goalMarkerOnScreen) {
+		storeCurrentLocation(goalMarkerPos, goalMarker.rotation * (Math.PI / 180.0)); 
+	    }
 	});
     });
 
@@ -166,6 +169,8 @@ function init() {
 	if (clicks === 1) {
 	    timer = setTimeout(function() {
 		current_location = self.innerHTML;
+		viewer.scene.removeChild(goalMarker);
+		goalMarkerOnScreen = false;
 		navPub.publish(new ROSLIB.Message({
 		    command: "switch-to-location",
 		    param: loc_n
@@ -332,6 +337,8 @@ function init() {
 	    dotDown = true;
 	} else if (dotDown) {
 	    dotDown = false;
+	    viewer.scene.removeChild(goalMarker);	    
+	    goalMarkerOnScreen = false;
 	    navPub.publish(new ROSLIB.Message({
 		command: "switch-to-location",
 		param: name
