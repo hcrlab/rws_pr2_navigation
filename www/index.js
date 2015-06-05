@@ -255,18 +255,26 @@ function init() {
     });
    
 
-    // TODO: factor
+    var dotColor = createjs.Graphics.getRGB(50, 50, 150, 1.0);
+    var dotHoverColor = createjs.Graphics.getRGB(50, 50, 150, 0.7);
+
     function createDot(stage, position, name) {
-	var dotGraphics = new createjs.Graphics();
-	dotGraphics.beginFill("red");
-	dotGraphics.drawCircle(0,0,5);
-	dotGraphics.endFill();
-	var dotShape = new createjs.Shape(dotGraphics).set({name:"dot"});
+	var dotShape = new ROS2D.NavigationDot({
+	    size : 7,
+	    color : dotColor,
+	});
+	dotShape.set({name:"dot"});
 	dotShape.x = position.x;
 	dotShape.y = position.y;
 	dotShape.scaleX = 1.0 / stage.scaleX;
 	dotShape.scaleY = 1.0 / stage.scaleY;
 	dotShape.name = name;
+	dotShape.addEventListener('mouseover', function(event) { 
+	    dotShape.setColor(dotHoverColor);
+	});
+	dotShape.addEventListener('mouseout', function(event) {
+	    dotShape.setColor(dotColor);
+	});
 	dotShape.addEventListener('mousedown', function(event) { dotOnClick(event, name, 'down'); });
 	dotShape.addEventListener('pressup', function(event) { dotOnClick(event, name, 'up'); });
 	return dotShape;

@@ -129,7 +129,7 @@ class Session:
     def switch_to_location(self, location_number):
         """ Switches to indicated location """
         if self.n_locations() > 0:
-            if location_number < self.n_locations() and location_number >= 0:
+            if location_number < self.n_locations() and location_number >= -1:
                 self.reset_viz()
                 self.current_location_index = location_number
                 self.initialize_viz()
