@@ -82,6 +82,10 @@ NAV2D.ImageMapClientNav = function(options) {
  *   * rootObject (optional) - the root object to add the click listeners to and render robot markers to
  *   * withOrientation (optional) - if the Navigator should consider the robot orientation (default: false)
  */
+
+var goalMarker;
+var goalMarkerPos;
+var goalMarkerOnScreen;
 NAV2D.Navigator = function(options) {
   var that = this;
   options = options || {};
@@ -119,23 +123,30 @@ NAV2D.Navigator = function(options) {
     goal.send();
 
     // create a marker for the goal
-    var goalMarker = new ROS2D.NavigationArrow({
-      size : 15,
+    if (!initializeMode) {	 
+      that.rootObject.removeChild(goalMarker);
+    }
+    goalMarker = new ROS2D.NavigationArrow2({
+      size : 20,
       strokeSize : 1,
-      fillColor : createjs.Graphics.getRGB(255, 64, 128, 0.66),
-      pulse : true
+      fillColor : createjs.Graphics.getRGB(66, 200, 128, 1.0),
+      ringColor : createjs.Graphics.getRGB(0, 128, 255, 1.0),
     });
+    goalMarkerPos = pose.position;
     goalMarker.x = pose.position.x;
     goalMarker.y = -pose.position.y;
     goalMarker.rotation = stage.rosQuaternionToGlobalTheta(pose.orientation);
     goalMarker.scaleX = 1.0 / stage.scaleX;
     goalMarker.scaleY = 1.0 / stage.scaleY;
-    that.rootObject.addChild(goalMarker);
-
-    goal.on('result', function() {
-      that.rootObject.removeChild(goalMarker);
-    });
-  }
+    if (!initializeMode) {
+      navPub.publish(new ROSLIB.Message({
+        command: "switch-to-location",
+        param: "-1"
+      }));
+      that.rootObject.addChild(goalMarker);
+      goalMarkerOnScreen = true;
+    }
+  }  
 
   NAV2D.Navigator.processPose = options.processPose || NAV2D.Navigator.sendGoal;
 
@@ -157,6 +168,7 @@ NAV2D.Navigator = function(options) {
   // wait for a pose to come in first
   robotMarker.visible = false;
   this.rootObject.addChild(robotMarker);
+  
   var initScaleSet = false;
 
   // setup a listener for the robot pose
@@ -178,7 +190,6 @@ NAV2D.Navigator = function(options) {
 
     // change the angle
     robotMarker.rotation = stage.rosQuaternionToGlobalTheta(pose.orientation);
-
     robotMarker.visible = true;
   });
 
@@ -205,7 +216,6 @@ NAV2D.Navigator = function(options) {
     var yDelta = 0;
 
     var mouseEventHandler = function(event, mouseState) {
-
       if (mouseState === 'down'){
         // get position when mouse button is pressed down
         position = stage.globalToRos(event.stageX, event.stageY);
@@ -288,11 +298,13 @@ NAV2D.Navigator = function(options) {
         if (NAV2D.Navigator.processPose == null) {
           alert("null function");
         }
+	  console.log("about to process pose");
+	  console.log(NAV2D.Navigator.processPose);
         NAV2D.Navigator.processPose(pose);
       }
     };
 
-    this.rootObject.addEventListener('stagemousedown', function(event) {
+    this.rootObject.addEventListener('mousedown', function(event) {
       mouseEventHandler(event,'down');
     });
 

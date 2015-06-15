@@ -60,10 +60,8 @@ class Session:
     def _get_nav_system_state(self):
         """ Creates a message with the latest state"""
         return NavSystemState(
-            map(lambda act: act.name, self.locations),
-            map(lambda act: act.id, self.locations),
-            -1 if self.current_location_index is None else self.current_location_index,
-            Pose() if self.current_location_index is None else self.get_current_location().pose)
+            self.locations,
+            -1 if self.current_location_index is None else self.current_location_index)
 
     def create_new_location(self):
         """ Creates new location """
@@ -131,7 +129,7 @@ class Session:
     def switch_to_location(self, location_number):
         """ Switches to indicated location """
         if self.n_locations() > 0:
-            if location_number < self.n_locations() and location_number >= 0:
+            if location_number < self.n_locations() and location_number >= -1:
                 self.reset_viz()
                 self.current_location_index = location_number
                 self.initialize_viz()
