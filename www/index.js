@@ -115,6 +115,9 @@ function init() {
       processPose : processPose
     });
 
+    // initialize robot pose interaction - when activated, the user can select the pose
+    // on the map and the other controls are blurred out. When deactivated the interaction
+    // returns to normal
     document.querySelector("#initializePose").addEventListener("click", function() {
 	if (!initializeMode) {
 	    initializeMode = true;
@@ -164,6 +167,10 @@ function init() {
     }
     
     var current_location; // the current location selected
+    
+    // locations have both click and double click interaction
+    // single click = switch to clicked location
+    // double click = rename selected location
     function handleLocationClick(self, loc_n) {
 	clicks++;
 	if (clicks === 1) {
@@ -195,16 +202,19 @@ function init() {
 	self.parentNode.replaceChild(editableText, self);
 	editableText.focus();
 	removed = false;
+	// finish renaming if enter key was pressed or if text area deselected
 	editableText.addEventListener("keyup", function() { renameEnter(editableText) });
 	editableText.addEventListener("blur", function() { renameBlurred(editableText) });
     }
-    
+
+    // rename is key pressed was the enter key
     function renameEnter(self) {
-	if (window.event.keyCode == 13) {
+	if (window.event.keyCode == 13) {  // 13 = enter key
 	    renameBlurred(self);
 	}
     }
 
+    // rename the selected location to the text in the text area
     function renameBlurred(self) {
 	if (removed) return; // because removing a node fires this again
 	removed = true;
@@ -258,6 +268,7 @@ function init() {
     var dotColor = createjs.Graphics.getRGB(50, 50, 150, 1.0);
     var dotHoverColor = createjs.Graphics.getRGB(50, 50, 150, 0.7);
 
+    // creates a dot marker with the given position and name on the given stage
     function createDot(stage, position, name) {
 	var dotShape = new ROS2D.NavigationDot({
 	    size : 7,
@@ -270,9 +281,11 @@ function init() {
 	dotShape.scaleY = 1.0 / stage.scaleY;
 	dotShape.name = name;
 	dotShape.addEventListener('mouseover', function(event) { 
+	    document.body.style.cursor='pointer';
 	    dotShape.setColor(dotHoverColor);
 	});
 	dotShape.addEventListener('mouseout', function(event) {
+	    document.body.style.cursor='default';
 	    dotShape.setColor(dotColor);
 	});
 	dotShape.addEventListener('mousedown', function(event) { dotOnClick(event, name, 'down'); });
@@ -285,7 +298,8 @@ function init() {
     var rotationRingHoverColor = createjs.Graphics.getRGB(0, 128, 255, 0.7);
     var locationArrowColor = createjs.Graphics.getRGB(66, 200, 128, 1.0);
     var locationArrowHoverColor = createjs.Graphics.getRGB(66, 200, 128, 0.7);
-
+    
+    // creates a basic arrow shape with the given position and rotation on the given stage
     function createBasicArrow(stage, position, rotation) {
 	var marker = new ROS2D.NavigationArrow2({
 	    size : 20,
@@ -301,12 +315,15 @@ function init() {
 	return marker;
     }
 
+    // all interactions for a location marker. color change on hover, click to change position and orientation.
     function setLocationMarkerCallbacks(marker) {
 	locationArrow = marker.getArrow();
 	locationArrow.addEventListener('mouseover', function(event) {
+	    document.body.style.cursor='pointer';
 	    locationMarker.setArrowColor(locationArrowHoverColor);
 	});
 	locationArrow.addEventListener('mouseout', function(event) {
+	    document.body.style.cursor='default';
 	    locationMarker.setArrowColor(locationArrowColor);
 	});
 	locationArrow.addEventListener();
@@ -315,16 +332,19 @@ function init() {
         locationArrow.addEventListener('pressup', function(event) { locationEventHandler(event, 'up'); });
 	rotationRing = marker.getRotationRing();
 	rotationRing.addEventListener('mouseover', function(event) { 
+	    document.body.style.cursor='pointer';
 	    locationMarker.setRotationColor(rotationRingHoverColor); 
 	});
 	rotationRing.addEventListener('mouseout', function(event) { 
+	    document.body.style.cursor='default';
 	    locationMarker.setRotationColor(rotationRingColor); 
 	});
 	rotationRing.addEventListener('mousedown', function(event) { rotationEventHandler(event, 'down'); });
 	rotationRing.addEventListener('pressmove', function(event) { rotationEventHandler(event, 'move'); });
 	rotationRing.addEventListener('pressup', function(event) { rotationEventHandler(event, 'up'); });
     }
-
+    
+    // stores the currently selected location to the backend
     function storeCurrentLocation(currentPosition, thetaRadians) {
 	var qz =  Math.sin(-thetaRadians/2.0);
         var qw =  Math.cos(-thetaRadians/2.0);
@@ -340,7 +360,7 @@ function init() {
 
     var dotDown = false;
     function dotOnClick(event, name, mouseState) {
-	event.stopPropagation();
+	event.stopPropagation(); // don't want this to propagate down to the stage event listener
 	if (mouseState === 'down') {
 	    dotDown = true;
 	} else if (dotDown) {
