@@ -1,0 +1,5 @@
+<launch>
+	<group ns="navigation">
+	       <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" />
+	</group> 
+</launch>

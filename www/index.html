@@ -12,51 +12,177 @@
         <script src="http://cdn.robotwebtools.org/EventEmitter2/current/eventemitter2.js"></script>
         <script src="http://cdn.robotwebtools.org/roslibjs/current/roslib.js"></script>
         <script src="http://cdn.robotwebtools.org/ros2djs/current/ros2d.js"></script>
-
         <script src="nav.js"></script>
         <script src="index.js"></script>
-
+	<script src="NavigationArrow2.js"></script>
+	<script src="NavigationDot.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
         <style>
 
 		html, body {
 			width: 100%;
 			height: 100%;
-			margin: 0;
+			margin-left: 8px;
 			padding: 0;
+		        font-family: 'Open Sans', sans-serif;
+		}
+		
+		h1 {
+		  font-size: 18px;
+		  height: 50px;
+		  line-height: 50px;
+		  margin: 0px;
+		  text-align: center;
+		  background-color: #ffc107;
 		}
 
-		#overlay {
-			width: 100%;
-			height: 100%;
-			margin: 0;
-			padding: 0;
-			position: absolute;
-			top: 0;
-			left: 0;
-			background: rgba(60, 60, 60, 0.3);
-			display: flex;
-			justify-content: center;
-			flex-direction: column;
-			align-content: center;
+		ul {
+		        height: 450px;
+		        list-style: none;
+		        padding: 0px;
+		        margin: 0px;
+		        overflow: scroll;
 		}
 
-		#renameBox {
-			max-width: 400px;
-			margin-left: auto;
-			margin-right: auto;
-			background: black;
+		dialog {
+		  width: 800px;
+		  border-radius: 10px;
+		}
+
+		#notifications {
+		  border: 2px solid black;
+		  width: 1050px;
+		}
+	
+		#notifications div {
+		  margin: 8px;
+		  font-size: 18px;
+		  font-weight: bold;
+		  height: 24px;
+		}
+
+		#plugwarning, #initwarning, #localizedwarning {
+		  color: #cc0000;
+		}
+		
+		#notifications img {
+		  vertical-align: middle;
+		}
+
+		#key {
+		  border-top: solid 2px #333333;
+		}
+
+		#key div {
+		  margin-top: 16px;
+		  margin-left: 8px;
+		  margin-bottom: 20px;
+		}
+
+		#controls {
+		  background-color: #ffdd77;
+		}
+
+		#controls img {
+		  margin-left: 40px;
+		  margin-right: 1px;
+		  margin-bottom: 8px;
+		  margin-top: 8px;
+		}
+
+		#controls img:hover {
+		  border: 1px solid gray;
+		  margin-top: 7px;
+		  margin-bottom: 7px;
+		  margin-left: 39px;
+		  margin-right: 0px;
+		}
+
+		#initializePose {
+		  float: right;
+		  padding: 4px;
+		  font-size: 16px;
+		  line-height: 20px;
+		  color: white;
+		  text-align: center;
+		  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+		  background: #34495e;
+		  border: 0;
+		  border-bottom: 2px solid #263849;
+		  cursor: pointer;
+		  -webkit-box-shadow: inset 0 -2px #263849;
+		  box-shadow: inset 0 -2px #263849; 
+		}
+		
+		#initializePose:hover {
+		  border: 1px solid gray;
+		  color: gray;
+		  cursor: pointer;
+		}
+
+		#initializePose.depressed:hover {
+		  cursor: pointer;
+		}
+
+		#initializePose.depressed {
+		  border: 1px solid #263849;
+		  color: gray;
+		}
+
+		#locationControls {
+		  width: 300px;
+		  border: solid 2px #333333;
+		  height: 796px;
+		}
+
+		#locationControls, #nav {
+		       float: left;
+		}
+
+		#locationList li {
+		  height: 40px;
+		}
+
+		textarea {
+		  resize: none;
+		  height: 40px;
+		  width: 300px;
+		  line-height: 40px;
+		  text-align: center;
+		  margin: 0px;
+		  padding: 0px;
+		  font-size: 20px;
 		}
 
 		#locationList div {
 			background-color: #ddd;
 			color: #000;
-			border-radius: 5px;
-			min-height: 30px;
-			margin-bottom: 10px;
-			cursor: pointer;
+			height: 40px;
+			line-height: 40px;
+		        cursor: pointer;
+		        text-align: center;
+		        vertical-align: middle;
 		}
+		
+		#locationList div:hover {
+		       background-color: #999;
+		}
+
 		#locationList div.selected {
 			background-color:  #555;
+		}
+
+		#mode {
+		  height: 80px;
+		  margin-bottom: 24px;
+		}
+
+		#mode form {
+		  float: left;
+		}
+
+		#legend {
+		  float: left;
 		}
 
 		@media (min-width: 800px) {
@@ -65,81 +191,110 @@
 			}
 
 			button {
-				height: 30px;
-				margin-bottom: 5px;
-				min-width: 30px;
+				height: 42px;
+				width: 300px;
+		                background-color: #f2f5f6; 
+		                background-image: -webkit-gradient(linear, left top, left bottom, from(#f2f5f6), to(#c8d7dc));
+		                border: none;
 			}
+		       
+                        button:hover {
+		                background-color: #c4ced1; 
+		                background-image: -webkit-gradient(linear, left top, left bottom, from(#c4ced1), to(#a9c0c8));
+		        }
 		}
 
-        .fieldset-auto-width {
-            display: inline-block;
-        }
+		.blur {
+		  filter: blur(3px);
+		  -webkit-filter: blur(3px);
+		}
 
-		</style>
+		.arrow {
+		  vertical-align: text-bottom;
+		  margin-right: 8px;
+		}
+
+		.fieldset-auto-width {
+	          display: inline-block;
+		}
+	
+		.info {
+		  width: 20px;
+		  height: 20px;
+		  margin-left: 4px;
+		  vertical-align: text-bottom;
+		}
+	</style>
     </head>
 
     <body onload="init()">
     <div align="right"><a href="help.html">Help</a></div>
-    <form>
+    
+    <div id="notifications">
+      <h1>Notifications</h1>
+      <dialog id="plugwarningdialog">
+	<p>The cable for the PR2 is plugged in, making it dangerous to navigate. Unplug the cable from the outlet side, then from the robot side.</p>
+	<button id="plugwarningclose">Close</button>
+      </dialog>
+      <div id="plugwarning">
+	<span>The PR2 is plugged in</span>
+	<img src="images/info.png" class="info"><br/>
+      </div>
+
+      <dialog id="initwarningdialog">
+	<p>The robot doesn't know where it is located on the map. Select Initialize robot pose in the map controls below, then click on the map on the spot where the robot is currently located and drag to set the robot's orientation.</p>
+	<button id="initwarningclose">Close</button>
+      </dialog>
+      <div id="initwarning">
+	<span>The PR2 pose is not set</span>
+	<img src="images/info.png" class="info"><br/>
+      </div>
+
+      <dialog id="localizedwarningdialog">
+	<p>The robot is not very sure of its location. If you see this warning and navigation does not work, try setting a more accurate robot location on the map.</p>
+	<button id="localizedwarningclose">Close</button>
+      </dialog>
+      <div id="localizedwarning">
+	<span>The PR2 is not localized</span>
+	<img src="images/info.png" class="info">
+	<span id="initializePose">Initialize Robot Pose</span>
+      </div>
+    </div>
+ 
+     <!--<div id="mode">
+      <form id="mapcontrols" action="">
         <div>
-            <fieldset class="fieldset-auto-width">
-                <legend>Dashboard:</legend>
-                <div id="plugwarning">
-                    <b>The PR2 is plugged in. Please unplug the PR2 before attempting navigation.</b><br/>
-                </div>
-                <div id="initwarning">
-                    <b>The PR2 pose is not set. Please set the PR2 pose on the map.</b><br/>
-                </div>
-                <div id="localizedwarning">
-                    <b>The PR2 is not localized. Navigation may not work properly.</b>
-                </div>
-            </fieldset>
+          <h1>Modes<img src="images/info.png" class="info"></h1>
+          <input type="radio" name="maptype" id="setGoalRadioBtn" checked="true">Navigate
+          <input type="radio" name="maptype" id="setInitRadioBtn">Initialize robot pose
+          <input type="radio" name="maptype" id="setLocationRadioBtn">Set location
         </div>
-    </form>
-    <br>
-    <table>
-        <tr>
-            <th>Saved locations</th>
-        </tr>
-        <tr>
-            <td id="locationList"></td>
-        </tr>
-    </table>
-    <br>
-    <button com="delete-current" id="deleteBtn">Delete this location</button>
-    <button com="navigate-to-current" id="navigateBtn">Navigate to this location</button>
-    <br>
-    <button id="renameBtn">Rename location</button>
-    <div id="overlay" style="display: none;">
-        <div id="renameBox">
-            <input id="newName" />
-            <button id="doRename">Rename</button>
-            <button id="cancelRename">Cancel</button>
-        </div>
+      </form>
+            
+    </div>-->
+    <div id="locationAndMap">
+      <!-- Locations Panel -->
+      <div>
+	<div id="locationControls">
+	  <div id="savedLocations">
+            <h1>Saved Locations</h1>
+            <ul id="locationList"></ul>
+	  </div>
+	  <div id="controls">
+	    <img src="images/delete.png" alt="delete" com="delete-current" id="deleteBtn" width="40px" height="40px"></img>
+	    <img src="images/goal.png" alt="navigate" com="navigate-to-current" id="navigateBtn" width="40px" height="40px"></img>
+	    <img src="images/plus.png" alt="add" com="new-location" width="40px" height="40px"></img>
+	  </div>
+          <div id="key">
+	    <h1>Key</h1>
+	    <div class="item"><img class="arrow" src="images/current_robot_pose.jpg">Current Robot Pose</div>
+            <div class="item"><img class="arrow" src="images/saved_location.jpg">Currently selected location</div>
+            <div class="item"><img class="arrow" src="images/nav_goal.jpg">Navigation goal</div>
+	  </div>
+	</div>
+      <!-- Map Panel -->
+      <!-- Note: set map size so it fits fully in the browser? would need to add a zoom option in case it's too small -->
+      <div id="nav" style="width: 800px; float: left;"></div>
     </div>
-    <button com="record-location" id="recordBtn">Set location to the current pose</button>
-    <br>
-    <button com="new-location">Create new location</button>
-    <div style="width: 100%; overflow: hidden;">
-        <div id="nav" style="width: 800px; float: left;"></div>
-        <div style="margin-left: 820px;">
-            <form id="mapcontrols" action="">
-                <div>
-                    <fieldset class="fieldset-auto-width">
-                        <legend>Map modes:</legend>
-                        <input type="radio" name="maptype" id="setGoalRadioBtn" checked="true">Navigate<br>
-                        <input type="radio" name="maptype" id="setInitRadioBtn">Initialize robot pose<br>
-                        <input type="radio" name="maptype" id="setLocationRadioBtn">Set location
-                        <br/><br/>
-                        <img src="images/current_robot_pose.jpg"> Current robot pose
-                        <img src="images/saved_location.jpg"> Currently selected location
-                        <img src="images/nav_goal.jpg"> Navigation goal
-                        <br/><br/>
-                        To set a location on the map, click in the desired place and drag to set orientation.
-                    </fieldset>
-                </div>
-            </form>
-        </div>
-    </div>
-    </body>
+  </body>
 </html>
